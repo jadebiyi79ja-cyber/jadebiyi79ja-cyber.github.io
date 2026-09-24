@@ -86,9 +86,9 @@ export const WORKS: Work[] = [
   {
     title: 'Donut scene',
     description:
-      'Stills from a 160-frame camera move over a plate of iced donuts. The same animation plays behind the home page.',
+      'Stills from a 160-frame camera move over a plate of iced donuts. The animation plays behind the home page and at the top of this page.',
     tools: 'Blender · Cycles · 2025',
-    credit: 'Plant and utensil jar models from Poliigon.',
+    credit: "Made following Blender Guru's donut tutorial. Plant and utensil jar models from Poliigon.",
     images: [
       {
         src: `${HOME_URL}hero-poster.jpg`,
