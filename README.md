@@ -51,6 +51,9 @@ site and publishes it. One-time setup:
 | --- | --- |
 | `index.html` | The landing page's HTML shell: page title, meta description, Google Fonts, and the `#root` div React renders into |
 | `work/index.html` | The Work page's HTML shell. As a real file it's served at `/work/`, so no router is needed |
+| `about/index.html` | The About page's HTML shell, served at `/about/` |
+| `src/about.tsx` | About page entry point: loads the CSS and mounts `<AboutPage />` |
+| `src/AboutPage.tsx` | The About page: bio, fact chips, skills, what's next and contact links |
 | `src/main.tsx` | Landing page entry point: loads the CSS and mounts `<App />` |
 | `src/work.tsx` | Work page entry point: loads the CSS and mounts `<WorkPage />` |
 | `src/App.tsx` | The landing page layout: meta grid, headline, button, fact chips, over the background video |
@@ -63,7 +66,7 @@ site and publishes it. One-time setup:
 | `src/components/MobileMenu.tsx` | Full-screen phone menu with the staggered link animation, Escape to close, and focus handling |
 | `src/components/Logo.tsx` | The isometric cube mark, used in the navbar and the mobile menu |
 | `src/index.css` | Tailwind import, theme tokens (the `font-pixel` VT323 font and the `text-shadow-soft` shadow that keeps white text readable over the video), and base body styles |
-| `vite.config.ts` | Build config: React and Tailwind plugins, `base: '/'` for a GitHub Pages user site, and the two pages to build |
+| `vite.config.ts` | Build config: React and Tailwind plugins, `base: '/'` for a GitHub Pages user site, and the three pages to build |
 | `tsconfig.json` | TypeScript settings (strict mode) |
 | `.github/workflows/deploy.yml` | GitHub Actions: install, build, and publish to Pages on every push |
 | `public/` | Files served as-is: favicon, the background video `hero.mp4` and its poster `hero-poster.jpg`, the scrub video `scrub.mp4` (frames 1–160, a keyframe every 6 frames so seeking is fast), and the Work page images in `images/` |

@@ -8,6 +8,8 @@ export const PIECE_COUNT = 3
 export const HOME_URL = import.meta.env.BASE_URL
 // WORK (nav) and VIEW MY WORK (button) both open the Work page
 export const WORK_URL = `${HOME_URL}work/`
+export const ABOUT_URL = `${HOME_URL}about/`
+export const LINKEDIN_URL = 'https://www.linkedin.com/in/joseph-adebiyi-a55baa362'
 
 export type NavLink = {
   label: string
@@ -17,12 +19,8 @@ export type NavLink = {
 
 export const NAV_LINKS: NavLink[] = [
   { label: 'WORK', href: WORK_URL },
-  { label: 'ABOUT', href: '#' },
-  {
-    label: 'LINKEDIN',
-    href: 'https://www.linkedin.com/in/joseph-adebiyi-a55baa362',
-    newTab: true,
-  },
+  { label: 'ABOUT', href: ABOUT_URL },
+  { label: 'LINKEDIN', href: LINKEDIN_URL, newTab: true },
   { label: 'CONTACT', href: `mailto:${EMAIL}` },
 ]
 
@@ -42,7 +40,18 @@ export const FACTS = [
   { title: 'TEAM LEADER', detail: 'Subway' },
 ]
 
-export type WorkImage = { src: string; alt: string; width: number; height: number }
+// About page. Only facts Joseph has given; edit freely.
+export const ABOUT = {
+  intro: [
+    "I'm Joseph Adebiyi, a Year 13 student in Gravesend, Kent.",
+    'I taught myself Blender from online tutorials, building everything from a photoreal plate of donuts to a pair of isometric shops.',
+    "Since January 2024 I've volunteered on the tech side of live events: running cameras, the livestream and the lighting.",
+    "Alongside school I'm a team leader at Subway.",
+  ],
+  now: 'Applying for technology degree apprenticeships starting in 2027.',
+}
+
+export type WorkImage ={ src: string; alt: string; width: number; height: number }
 
 export type Work = {
   title: string

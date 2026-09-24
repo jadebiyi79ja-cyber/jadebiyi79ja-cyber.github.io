@@ -16,10 +16,11 @@ export default defineConfig({
   resolve: { alias: { '@': resolve(root, 'src') } },
   build: {
     rolldownOptions: {
-      // Two pages: the landing page (/) and the Work page (/work/)
+      // Three pages: the landing page (/), the Work page (/work/) and the About page (/about/)
       input: {
         main: resolve(root, 'index.html'),
         work: resolve(root, 'work/index.html'),
+        about: resolve(root, 'about/index.html'),
       },
     },
   },
