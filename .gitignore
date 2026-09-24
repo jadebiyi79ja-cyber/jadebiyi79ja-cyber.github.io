@@ -1,0 +1,9 @@
+# Recreated by `npm install` and `npm run build`, so never committed
+node_modules/
+dist/
+
+# Editor, OS and tool clutter
+.DS_Store
+Thumbs.db
+*.log
+.claude/

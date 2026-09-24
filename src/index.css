@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Theme tokens: Tailwind turns each into a class (`font-pixel`, `text-shadow-soft`) */
+@theme {
+  --font-pixel: "VT323", monospace;
+
+  /* Keeps white text readable over bright parts of the video without darkening
+     the video itself: a crisp edge, a close halo for small text, and a wide soft glow */
+  --text-shadow-soft:
+    0 1px 2px rgb(0 0 0 / 0.6), 0 0 6px rgb(0 0 0 / 0.45), 0 2px 18px rgb(0 0 0 / 0.4);
+}
+
+@layer base {
+  body {
+    font-family: "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #000; /* no white flash before the page draws */
+  }
+
+  /* Tailwind v4 gives buttons the default arrow cursor; restore the pointer */
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}
