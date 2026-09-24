@@ -11,6 +11,15 @@
 }
 
 @layer base {
+  /* Colour names the lanyard badge (from 21st.dev) expects, mapped to this site's palette */
+  :root {
+    --color-background: #000;
+    --color-foreground: #fff;
+    --color-primary: #fff; /* focus rings */
+    --color-border: rgb(255 255 255 / 0.3); /* same as the VIEW MY WORK button border */
+    --color-muted: rgb(255 255 255 / 0.1); /* same as its hover fill */
+  }
+
   body {
     font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
