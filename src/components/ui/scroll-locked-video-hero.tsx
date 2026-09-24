@@ -19,6 +19,8 @@ export interface ScrollLockedVideoHeroProps {
   title: ReactNode
   tagline?: ReactNode
   scrollHint?: string
+  /** Label for the button that jumps straight past the hero */
+  skipLabel?: string
   /** Total input distance (px) needed to scrub the full video. */
   scrubDistance?: number
   /** On phones, start this far into the video (0–1), e.g. to skip frames too bright behind the title. */
@@ -43,6 +45,7 @@ export default function ScrollLockedVideoHero({
   title,
   tagline,
   scrollHint = "SCROLL",
+  skipLabel = "SKIP",
   scrubDistance = 2400,
   phoneStart = 0,
   phonePosterSrc,
@@ -56,6 +59,8 @@ export default function ScrollLockedVideoHero({
   const hintRef = useRef<HTMLDivElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
   const progressBarRef = useRef<HTMLDivElement>(null)
+  // Set inside the effect below, where the lock lives; the Skip button calls it
+  const skipRef = useRef<() => void>(() => {})
 
   useEffect(() => {
     if (!videoRef.current || !sectionRef.current) return
@@ -97,8 +102,12 @@ export default function ScrollLockedVideoHero({
     // played. A silent play-then-pause kicks off loading.
     video.play().then(() => video.pause()).catch(() => {})
 
+    // Where the page content starts, just below the hero
+    const contentTop = () => section.offsetTop + section.offsetHeight
+
     if (reduceMotion) {
       showEnd()
+      skipRef.current = () => window.scrollTo({ top: contentTop() }) // no lock, so just jump
       return () => video.removeEventListener("loadeddata", onLoadedData)
     }
 
@@ -146,6 +155,14 @@ export default function ScrollLockedVideoHero({
       b.position = b.top = b.left = b.right = b.width = b.overscrollBehavior = ""
       window.scrollTo(0, lockedScrollY)
       section.style.touchAction = "pan-y" // let phones scroll the page again
+    }
+
+    // Skip: finish the reveal, release the page and scroll to the content
+    skipRef.current = () => {
+      targetProgress = currentProgress = 1
+      started = true
+      releaseLock()
+      window.scrollTo({ top: contentTop(), behavior: "smooth" })
     }
 
     // Returns true when the input was used to scrub (so the page must not move)
@@ -271,6 +288,16 @@ export default function ScrollLockedVideoHero({
         <span>{scrollHint}</span>
         <ArrowDown size={16} aria-hidden="true" className="motion-safe:animate-bounce" />
       </div>
+
+      {/* A real button, so mouse, touch and keyboard (Tab + Enter) can all skip the scrub */}
+      <button
+        type="button"
+        onClick={() => skipRef.current()}
+        className="absolute bottom-[clamp(20px,6vh,48px)] right-5 sm:right-6 md:right-10 lg:right-14 flex items-center gap-1.5 font-pixel text-base tracking-[0.2em] text-white/70 hover:text-white transition-colors text-shadow-soft"
+      >
+        {skipLabel}
+        <ArrowDown size={14} aria-hidden="true" />
+      </button>
 
       {/* Thin progress line that fills as the video advances */}
       <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10">

@@ -61,6 +61,7 @@ export default function WorkPage() {
         // where white text first reads clearly (5.1:1 contrast behind the title)
         phoneStart={59 / 159}
         phonePosterSrc={`${HOME_URL}images/scrub-phone-poster.jpg`}
+        skipLabel="SKIP TO WORK"
         title={
           <>
             Joseph <span className={PIXEL_WORD}>Adebiyi</span>
