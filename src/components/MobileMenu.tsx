@@ -34,7 +34,8 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
       aria-label="Menu"
       // Closed = invisible, so also unreachable by keyboard and screen readers
       inert={!open}
-      className={`fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col ${TRANSITION} ${
+      // text-white: the menu is portalled into <body>, outside the page's white-text wrapper
+      className={`fixed inset-0 z-50 bg-black/95 text-white backdrop-blur-md flex flex-col ${TRANSITION} ${
         open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       }`}
     >
