@@ -56,6 +56,7 @@ site and publishes it. One-time setup:
 | `src/App.tsx` | The landing page layout: meta grid, headline, button, fact chips, over the background video |
 | `src/WorkPage.tsx` | The Work page: the three pieces with their images and captions |
 | `src/content.ts` | Editable content in one place: email, links, skills, facts, piece count, and the Work page pieces and captions |
+| `src/components/ui/scroll-locked-video-hero.tsx` | Work page intro: scrolling scrubs the donut animation frame by frame, then releases into the page (keyboard and touch too; no lock with "reduce motion") |
 | `src/components/SiteHeader.tsx` | Logo, nav and hamburger shared by both pages. The phone menu is rendered into `<body>` with a React portal |
 | `src/components/SiteFooter.tsx` | The footer strip shared by both pages |
 | `src/components/BackgroundVideo.tsx` | Background video. Respects "reduce motion" and falls back to black if the file is missing |
@@ -65,4 +66,4 @@ site and publishes it. One-time setup:
 | `vite.config.ts` | Build config: React and Tailwind plugins, `base: '/'` for a GitHub Pages user site, and the two pages to build |
 | `tsconfig.json` | TypeScript settings (strict mode) |
 | `.github/workflows/deploy.yml` | GitHub Actions: install, build, and publish to Pages on every push |
-| `public/` | Files served as-is: favicon, the background video `hero.mp4` and its poster `hero-poster.jpg`, and the Work page images in `images/` |
+| `public/` | Files served as-is: favicon, the background video `hero.mp4` and its poster `hero-poster.jpg`, the scrub video `scrub.mp4` (frames 1–160, a keyframe every 6 frames so seeking is fast), and the Work page images in `images/` |

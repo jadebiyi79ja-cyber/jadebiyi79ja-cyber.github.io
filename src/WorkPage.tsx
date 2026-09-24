@@ -1,3 +1,4 @@
+import ScrollLockedVideoHero from '@/components/ui/scroll-locked-video-hero'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
 import { HOME_URL, WORKS, type Work } from './content'
@@ -37,7 +38,7 @@ function Piece({ work, index }: { work: Work; index: number }) {
           <p className="font-pixel text-base tracking-widest text-white/50">
             {String(index + 1).padStart(2, '0')}
           </p>
-          <h2 className="text-lg md:text-xl tracking-wide uppercase">{work.title}</h2>
+          <h3 className="text-lg md:text-xl tracking-wide uppercase">{work.title}</h3>
         </div>
         <div className="mt-2 md:mt-0 max-w-prose text-sm text-white/80 leading-relaxed">
           <p>{work.description}</p>
@@ -51,13 +52,31 @@ function Piece({ work, index }: { work: Work; index: number }) {
 
 export default function WorkPage() {
   return (
-    <div className="min-h-svh bg-black text-white px-5 sm:px-6 md:px-10 lg:px-14">
+    <div className="bg-black text-white">
+      {/* Scroll scrubs the donut animation, then releases into the page below */}
+      <ScrollLockedVideoHero
+        videoSrc={`${HOME_URL}scrub.mp4`}
+        posterSrc={`${HOME_URL}images/donut-closeup.jpg`}
+        title={
+          <>
+            Joseph <span className={PIXEL_WORD}>Adebiyi</span>
+          </>
+        }
+        tagline={
+          <>
+            I build in <span className={PIXEL_WORD}>Blender</span> and run the tech behind{' '}
+            <span className={PIXEL_WORD}>live</span> events
+          </>
+        }
+      />
+
+      <div className="min-h-svh px-5 sm:px-6 md:px-10 lg:px-14">
       <SiteHeader logoHref={HOME_URL} current="WORK" />
 
       <main className="pb-12">
-        <h1 className="mt-4 text-3xl sm:text-4xl md:text-5xl tracking-wide uppercase font-normal leading-tight">
+        <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl tracking-wide uppercase font-normal leading-tight">
           {WORKS.length} pieces made in <span className={PIXEL_WORD}>Blender</span>
-        </h1>
+        </h2>
 
         <ol className="mt-10 md:mt-16 space-y-16 md:space-y-24">
           {WORKS.map((work, i) => (
@@ -70,6 +89,7 @@ export default function WorkPage() {
 
       <div className="pb-4">
         <SiteFooter />
+      </div>
       </div>
     </div>
   )

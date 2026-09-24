@@ -12,6 +12,8 @@ export default defineConfig({
   // (A project site like .../portfolio/ would need base: '/portfolio/'.)
   base: '/',
   plugins: [react(), tailwindcss()],
+  // "@/..." imports resolve to src/ (matches "paths" in tsconfig.json)
+  resolve: { alias: { '@': resolve(root, 'src') } },
   build: {
     rolldownOptions: {
       // Two pages: the landing page (/) and the Work page (/work/)
