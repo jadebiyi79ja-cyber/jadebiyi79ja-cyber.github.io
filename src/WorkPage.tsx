@@ -57,6 +57,10 @@ export default function WorkPage() {
       <ScrollLockedVideoHero
         videoSrc={`${HOME_URL}scrub.mp4`}
         posterSrc={`${HOME_URL}images/donut-closeup.jpg`}
+        // Phones crop to the bright centre of the close-up, so start at frame 60 of 160,
+        // where white text first reads clearly (5.1:1 contrast behind the title)
+        phoneStart={59 / 159}
+        phonePosterSrc={`${HOME_URL}images/scrub-phone-poster.jpg`}
         title={
           <>
             Joseph <span className={PIXEL_WORD}>Adebiyi</span>

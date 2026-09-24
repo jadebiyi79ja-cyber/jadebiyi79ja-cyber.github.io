@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { ArrowDown } from "lucide-react"
 
 // ─────────────────────────────────────────────────────────────
@@ -21,8 +21,15 @@ export interface ScrollLockedVideoHeroProps {
   scrollHint?: string
   /** Total input distance (px) needed to scrub the full video. */
   scrubDistance?: number
+  /** On phones, start this far into the video (0–1), e.g. to skip frames too bright behind the title. */
+  phoneStart?: number
+  /** Poster for phones, matching the frame at phoneStart. */
+  phonePosterSrc?: string
   className?: string
 }
+
+// Tailwind's `sm` breakpoint: narrower than this counts as a phone
+const PHONE_QUERY = "(max-width: 639px)"
 
 function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v))
@@ -37,8 +44,12 @@ export default function ScrollLockedVideoHero({
   tagline,
   scrollHint = "SCROLL",
   scrubDistance = 2400,
+  phoneStart = 0,
+  phonePosterSrc,
   className = "",
 }: ScrollLockedVideoHeroProps) {
+  // Decided once on load (resizing a desktop window later doesn't switch it)
+  const [isPhone] = useState(() => window.matchMedia(PHONE_QUERY).matches)
   const sectionRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
@@ -56,8 +67,10 @@ export default function ScrollLockedVideoHero({
 
     let duration = 0
     let rafId = 0
-    let targetProgress = 0
-    let currentProgress = 0
+    // Where the scrub begins: 0 on desktop, phoneStart on phones
+    const start = isPhone ? clamp(phoneStart, 0, 0.95) : 0
+    let targetProgress = start
+    let currentProgress = start
     let started = false
     let isSeeking = false
     let pendingTime: number | null = null
@@ -145,8 +158,8 @@ export default function ScrollLockedVideoHero({
         releaseLock() // at the end and still pushing forward: hand scrolling back to the page
         return false
       }
-      targetProgress = clamp(targetProgress + deltaY / scrubDistance, 0, 1)
-      if (targetProgress > 0.001) started = true
+      targetProgress = clamp(targetProgress + deltaY / scrubDistance, start, 1)
+      if (targetProgress > start + 0.001) started = true
       return true
     }
 
@@ -179,9 +192,11 @@ export default function ScrollLockedVideoHero({
       currentProgress += (targetProgress - currentProgress) * 0.18
       if (duration > 0) seekTo(currentProgress * duration)
 
-      video.style.transform = `scale(${1 + currentProgress * 0.06})`
+      // How far through the scrub we are (0 at the start frame, 1 at the end)
+      const p = (currentProgress - start) / (1 - start)
+      video.style.transform = `scale(${1 + p * 0.06})`
       if (titleRef.current) {
-        const t = 1 - clamp(currentProgress / 0.35, 0, 1)
+        const t = 1 - clamp(p / 0.35, 0, 1)
         titleRef.current.style.opacity = String(t)
         titleRef.current.style.transform = `translateY(${(1 - t) * -24}px) scale(${0.96 + t * 0.04})`
         titleRef.current.style.filter = `blur(${(1 - t) * 10}px)`
@@ -194,7 +209,7 @@ export default function ScrollLockedVideoHero({
         taglineRef.current.style.transform = `translateY(${(1 - t) * 20}px) scale(${0.97 + t * 0.03})`
         taglineRef.current.style.filter = `blur(${(1 - t) * 8}px)`
       }
-      if (progressBarRef.current) progressBarRef.current.style.transform = `scaleX(${currentProgress})`
+      if (progressBarRef.current) progressBarRef.current.style.transform = `scaleX(${p})`
 
       rafId = requestAnimationFrame(frame)
     }
@@ -210,19 +225,19 @@ export default function ScrollLockedVideoHero({
       cancelAnimationFrame(rafId)
       releaseLock()
     }
-  }, [scrubDistance])
+  }, [scrubDistance, isPhone, phoneStart])
 
   return (
     <div ref={sectionRef} className={`relative h-dvh w-full overflow-hidden bg-black ${className}`}>
       <video
         ref={videoRef}
         src={videoSrc}
-        poster={posterSrc}
+        poster={isPhone && phonePosterSrc ? phonePosterSrc : posterSrc}
         muted
         playsInline
         preload="auto"
         aria-hidden="true"
-        // Always visible: the poster (the video's own first frame) shows while it loads
+        // Always visible: the poster (the video's own start frame) shows while it loads
         className="pointer-events-none absolute inset-0 h-full w-full origin-center object-cover will-change-transform"
       />
 
