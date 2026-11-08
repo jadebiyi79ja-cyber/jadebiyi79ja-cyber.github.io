@@ -9,6 +9,7 @@ export const HOME_URL = import.meta.env.BASE_URL
 // WORK (nav) and VIEW MY WORK (button) both open the Work page
 export const WORK_URL = `${HOME_URL}work/`
 export const ABOUT_URL = `${HOME_URL}about/`
+export const DESIGN_URL = `${HOME_URL}design/`
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/joseph-adebiyi-a55baa362'
 
 export type NavLink = {
@@ -20,6 +21,7 @@ export type NavLink = {
 export const NAV_LINKS: NavLink[] = [
   { label: 'WORK', href: WORK_URL },
   { label: 'ABOUT', href: ABOUT_URL },
+  { label: 'DESIGN', href: DESIGN_URL },
   { label: 'LINKEDIN', href: LINKEDIN_URL, newTab: true },
   { label: 'CONTACT', href: `mailto:${EMAIL}` },
 ]
