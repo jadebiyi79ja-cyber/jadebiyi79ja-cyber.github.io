@@ -8,7 +8,9 @@ import { ArrowDown } from "lucide-react"
 // While it's on screen at the top of the page, the page is pinned
 // (body position:fixed — the reliable technique modal libraries use)
 // and wheel, touch and keyboard input drive video.currentTime
-// forwards and backwards. At the end of the video, scrolling further
+// forwards and backwards. Each scroll gesture (one wheel flick, one swipe,
+// one key press) jumps to the next stop, so the reveal takes 3 scrolls on
+// desktop and 2 on phones. At the end of the video, scrolling further
 // releases the page; scrolling back up to the top re-engages the scrub.
 // With "reduce motion" on there's no lock: it shows the final frame.
 // ─────────────────────────────────────────────────────────────
@@ -21,8 +23,8 @@ export interface ScrollLockedVideoHeroProps {
   scrollHint?: string
   /** Label for the button that jumps straight past the hero */
   skipLabel?: string
-  /** Total input distance (px) needed to scrub the full video. */
-  scrubDistance?: number
+  /** Scroll gestures needed to play the whole video: desktop / phone. */
+  steps?: { desktop: number; phone: number }
   /** On phones, start this far into the video (0–1), e.g. to skip frames too bright behind the title. */
   phoneStart?: number
   /** Poster for phones, matching the frame at phoneStart. */
@@ -37,7 +39,10 @@ function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v))
 }
 
-const KEY_STEPS: Record<string, number> = { ArrowDown: 120, ArrowUp: -120, PageDown: 600, PageUp: -600 }
+// A wheel flick is one gesture until the wheel has been quiet this long (ms)
+const GESTURE_IDLE_MS = 180
+// A swipe must travel this far (px) to count as a scroll
+const SWIPE_MIN_PX = 16
 
 export default function ScrollLockedVideoHero({
   videoSrc,
@@ -46,7 +51,7 @@ export default function ScrollLockedVideoHero({
   tagline,
   scrollHint = "SCROLL",
   skipLabel = "SKIP",
-  scrubDistance = 2400,
+  steps: stepCounts = { desktop: 3, phone: 2 },
   phoneStart = 0,
   phonePosterSrc,
   className = "",
@@ -82,7 +87,13 @@ export default function ScrollLockedVideoHero({
     let lastSought = -1
     let locked = false
     let lockedScrollY = 0
-    let touchY = 0
+    // The video plays in `steps` equal jumps; stopIndex is the stop we are heading for
+    const steps = Math.max(1, isPhone ? stepCounts.phone : stepCounts.desktop)
+    let stopIndex = 0
+    let wheelGestureActive = false
+    let wheelIdleTimer = 0
+    let touchStartY = 0
+    let touchCounted = false
 
     // Draw the finished state directly (used for reduced motion)
     function showEnd() {
@@ -165,38 +176,63 @@ export default function ScrollLockedVideoHero({
       window.scrollTo({ top: contentTop(), behavior: "smooth" })
     }
 
+    // One scroll gesture moves the video to the next (dir 1) or previous (dir -1) stop.
     // Returns true when the input was used to scrub (so the page must not move)
-    function handleDelta(deltaY: number) {
+    function stepScrub(dir: number) {
       if (!locked) {
         // Re-engage when scrolling back up while the page is at the top
-        if (deltaY < 0 && window.scrollY <= 1) engageLock()
+        if (dir < 0 && window.scrollY <= 1) engageLock()
         else return false
-      } else if (deltaY > 0 && targetProgress >= 1 && currentProgress > 0.98) {
+      } else if (dir > 0 && stopIndex >= steps && currentProgress > 0.98) {
         releaseLock() // at the end and still pushing forward: hand scrolling back to the page
         return false
       }
-      targetProgress = clamp(targetProgress + deltaY / scrubDistance, start, 1)
-      if (targetProgress > start + 0.001) started = true
+      stopIndex = clamp(stopIndex + dir, 0, steps)
+      targetProgress = start + ((1 - start) * stopIndex) / steps
+      if (stopIndex > 0) started = true
       return true
     }
 
     const onWheel = (e: WheelEvent) => {
-      if (handleDelta(e.deltaY)) e.preventDefault()
+      if (Math.abs(e.deltaY) < 1) return // sideways scroll
+      // Only the first event of a flick counts; the rest of it (and a trackpad's
+      // momentum) is swallowed while the page is pinned, so it can't skip a stop
+      const first = !wheelGestureActive
+      wheelGestureActive = true
+      window.clearTimeout(wheelIdleTimer)
+      wheelIdleTimer = window.setTimeout(() => (wheelGestureActive = false), GESTURE_IDLE_MS)
+      if (first) {
+        if (stepScrub(Math.sign(e.deltaY))) e.preventDefault()
+      } else if (locked) {
+        e.preventDefault()
+      }
     }
     const onTouchStart = (e: TouchEvent) => {
-      touchY = e.touches[0]?.clientY ?? 0
+      touchStartY = e.touches[0]?.clientY ?? 0
+      touchCounted = false
     }
     const onTouchMove = (e: TouchEvent) => {
-      const y = e.touches[0]?.clientY ?? touchY
-      const deltaY = touchY - y
-      touchY = y
-      if (handleDelta(deltaY) && e.cancelable) e.preventDefault()
+      const y = e.touches[0]?.clientY ?? touchStartY
+      const travelled = touchStartY - y
+      // One swipe = one step, as soon as it has moved a little
+      if (!touchCounted && Math.abs(travelled) >= SWIPE_MIN_PX) {
+        touchCounted = true
+        if (stepScrub(Math.sign(travelled)) && e.cancelable) e.preventDefault()
+      } else if (locked && e.cancelable) {
+        e.preventDefault() // keep the pinned page still for the rest of the swipe
+      }
     }
     const onKeyDown = (e: KeyboardEvent) => {
       // Leave typing alone (the target can be window/document, which have no closest())
       if (e.target instanceof Element && e.target.closest("input, textarea, select, [contenteditable]")) return
-      const step = e.key === " " ? (e.shiftKey ? -600 : 600) : KEY_STEPS[e.key]
-      if (step !== undefined && handleDelta(step)) e.preventDefault()
+      if (e.repeat) return // holding a key shouldn't fly through the stops
+      const dir =
+        e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)
+          ? 1
+          : e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)
+            ? -1
+            : 0
+      if (dir !== 0 && stepScrub(dir)) e.preventDefault()
     }
 
     if (window.scrollY <= 1) engageLock()
@@ -240,9 +276,10 @@ export default function ScrollLockedVideoHero({
       window.removeEventListener("touchmove", onTouchMove)
       window.removeEventListener("keydown", onKeyDown)
       cancelAnimationFrame(rafId)
+      window.clearTimeout(wheelIdleTimer)
       releaseLock()
     }
-  }, [scrubDistance, isPhone, phoneStart])
+  }, [stepCounts.desktop, stepCounts.phone, isPhone, phoneStart])
 
   return (
     <div ref={sectionRef} className={`relative h-dvh w-full overflow-hidden bg-black ${className}`}>
