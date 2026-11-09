@@ -10,6 +10,7 @@ export const HOME_URL = import.meta.env.BASE_URL
 export const WORK_URL = `${HOME_URL}work/`
 export const ABOUT_URL = `${HOME_URL}about/`
 export const DESIGN_URL = `${HOME_URL}design/`
+export const PRICING_URL = `${HOME_URL}pricing/`
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/joseph-adebiyi-a55baa362'
 
 export type NavLink = {
@@ -22,6 +23,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: 'WORK', href: WORK_URL },
   { label: 'ABOUT', href: ABOUT_URL },
   { label: 'DESIGN', href: DESIGN_URL },
+  { label: 'PRICING', href: PRICING_URL },
   { label: 'LINKEDIN', href: LINKEDIN_URL, newTab: true },
   { label: 'CONTACT', href: `mailto:${EMAIL}` },
 ]
@@ -115,4 +117,80 @@ export const WORKS: Work[] = [
       },
     ],
   },
+]
+
+export type Service = {
+  title: string
+  description: string
+  price: string // shown in the pixel font, e.g. "From £150"
+  turnaround: string
+  includes: string[]
+  tools: string
+  example?: { label: string; href: string }
+}
+
+// The Pricing page. DRAFT: the prices, turnaround times and include-lists below are
+// placeholders written to be edited. Replace them with your own before this goes live.
+// Everything else on the page is taken from the CV and the work already on the site.
+export const SERVICES: Service[] = [
+  {
+    title: 'Websites',
+    description:
+      'A fast, hand-built site in React, TypeScript and Tailwind, published free on GitHub Pages. This portfolio is the example: a landing page, a Work page, an About page and a Design page with two WebGL scenes.',
+    price: 'From £150',
+    turnaround: 'Usually 1 to 3 weeks',
+    includes: [
+      'Layouts for phones and desktops',
+      'One set of design rules across every page',
+      'Keyboard use and reduced-motion settings respected',
+      'Published for you on GitHub Pages',
+    ],
+    tools: 'React · TypeScript · Tailwind · AI-assisted',
+    example: { label: 'This site', href: HOME_URL },
+  },
+  {
+    title: '3D renders',
+    description:
+      'A still image of a scene or product, modelled in Blender and rendered in Cycles. I have built an isometric donut shop and coffee shop at dusk, and a photoreal plate of iced donuts.',
+    price: 'From £60',
+    turnaround: 'Usually about 1 week',
+    includes: [
+      'Modelling, lighting and camera',
+      'Rendered at 1920 x 1080 (Full HD)',
+      'Delivered as a JPG or PNG',
+    ],
+    tools: 'Blender · Cycles',
+    example: { label: 'See the renders', href: WORK_URL },
+  },
+  {
+    title: '3D animation',
+    description:
+      'A short camera move or seamless loop, rendered frame by frame. My donut scene is 160 frames: a push-in that eases to a stop and pulls back out, looped as a website background.',
+    price: 'From £120',
+    turnaround: 'Usually 1 to 2 weeks',
+    includes: [
+      'Camera move planned with you',
+      'Rendered at 24 fps as an H.264 MP4',
+      'Seamless loop for websites on request',
+    ],
+    tools: 'Blender · Cycles · MP4',
+    example: { label: 'See the animation', href: WORK_URL },
+  },
+  {
+    title: 'Live event tech',
+    description:
+      'Cameras, livestream, stage lighting and presentation screens. I have run these for services with audiences of several hundred people since January 2024, and I fix problems while the event keeps running.',
+    price: 'Quote on request',
+    turnaround: 'Around school and my volunteer team',
+    includes: ['Camera operation and livestream', 'Stage lighting', 'Screens and presentation software'],
+    tools: 'Live events · since 2024',
+  },
+]
+
+export const QUOTE_URL = `mailto:${EMAIL}?subject=${encodeURIComponent('Quote request')}`
+
+export const STEPS = [
+  { title: 'Tell me', text: 'Email me what you want made, what it is for, and when you need it.' },
+  { title: 'I quote', text: 'I send a fixed price for the work, based on the starting prices above.' },
+  { title: 'I make it', text: 'I share progress, you review it, and I fix what is wrong before I hand it over.' },
 ]
