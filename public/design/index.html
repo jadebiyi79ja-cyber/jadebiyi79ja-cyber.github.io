@@ -3,177 +3,257 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>biyi.graphics - Design by Joseph Adebiyi</title>
-<meta name="description" content="Graphic design studio work by Joseph Adebiyi: scroll through the jellyfish, then spin the glass cube.">
+<title>Design - Joseph Adebiyi</title>
+<meta name="description" content="biyi.graphics: graphic design by Joseph Adebiyi. Scroll through the jellyfish, then spin the glass cube.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@600&family=Space+Mono&family=Poppins:wght@300;400;500;600;700;800&family=VT323&display=swap" rel="stylesheet">
+<!-- Same two families as the rest of the site: Inter for text, VT323 for the pixel words -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=VT323&display=swap" rel="stylesheet">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
 </script>
 <style>
-:root{--u:min(calc(100vw/1600),calc(100vh/900));--ink:#0b0b10;--pad-x:clamp(20px,6.95vw,120px)}
-*{box-sizing:border-box;margin:0;padding:0}
-html{background:#dcd8f4;scroll-behavior:smooth}
-body{color:var(--ink);font-family:"Space Mono",ui-monospace,monospace;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-button:focus-visible,a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* ===== Design tokens (from the Joseph Adebiyi design system) ===== */
+:root{
+  --background:#000;--foreground:#fff;--primary:#fff;
+  --fg-90:#ffffffe6;--fg-85:#ffffffd9;--fg-80:#ffffffcc;--fg-70:#ffffffb3;--fg-60:#ffffff99;--fg-50:#ffffff80;
+  --border:#ffffff4d;--muted:#ffffff1a;--surface-glass:#ffffff0d;--surface-overlay:#000000f2;
+  --accent:#ef4444;--accent-hover:#f87171;
+  --font-sans:"Inter",sans-serif;--font-pixel:"VT323",monospace;
+  --text-shadow-soft:0 1px 2px rgba(0,0,0,.6),0 0 6px rgba(0,0,0,.45),0 2px 18px rgba(0,0,0,.4);
+  --opacity-hover:.7;
+  --gutter:20px;
+  --u:min(calc(100vw/1600),calc(100vh/900));
+}
+@media (min-width:640px){:root{--gutter:24px}}
+@media (min-width:768px){:root{--gutter:40px}}
+@media (min-width:1024px){:root{--gutter:56px}}
 
-/* ---------- Part 1: jellyfish scroll ---------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--background);scroll-behavior:smooth}
+body{background:var(--background);color:var(--foreground);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;border-radius:0;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ja-link{transition:opacity .15s}.ja-link:hover{opacity:var(--opacity-hover)}
+.pixel-word{font-family:var(--font-pixel);font-weight:400;font-size:1.25em;display:inline-block;line-height:1;vertical-align:baseline}
+
+/* ===== Shared header (same as every other page) ===== */
+.ja-header{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:24px var(--gutter);pointer-events:none;text-shadow:var(--text-shadow-soft)}
+.ja-header a,.ja-header button{pointer-events:auto}
+.ja-nav{display:none;gap:32px;font-size:14px;line-height:20px;letter-spacing:.025em}
+.ja-nav a[aria-current="page"]{text-decoration:underline;text-underline-offset:4px}
+.ja-iconbtn{padding:8px;display:inline-flex;transition:opacity .15s}.ja-iconbtn:hover{opacity:var(--opacity-hover)}
+@media (min-width:768px){.ja-nav{display:flex}.ja-header .ja-iconbtn{display:none}}
+.ja-menu{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--surface-overlay);color:var(--foreground);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:opacity .5s cubic-bezier(.16,1,.3,1);opacity:0;pointer-events:none}
+.ja-menu[data-open="true"]{opacity:1;pointer-events:auto}
+.ja-menu-top{display:flex;align-items:center;justify-content:space-between;padding:24px var(--gutter)}
+.ja-menu nav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.ja-menu nav a{font-size:24px;line-height:32px;letter-spacing:.1em;opacity:0;transform:translateY(16px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+.ja-menu[data-open="true"] nav a{opacity:1;transform:none}
+
+/* ===== Ghost button + square icon buttons ===== */
+.ja-btn{display:inline-flex;align-items:center;gap:12px;padding:12px 24px;border:1px solid var(--border);background:var(--surface-glass);color:var(--foreground);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);font:400 14px/20px var(--font-sans);letter-spacing:.05em;text-transform:uppercase;transition:background-color .15s}
+.ja-btn:hover{background:var(--muted)}
+.ja-sq{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--border);background:var(--surface-glass);color:var(--foreground);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background-color .15s}
+.ja-sq:hover{background:var(--muted)}
+.ja-sq svg,.ja-btn svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ja-sq svg{width:18px;height:18px}.ja-btn svg{width:14px;height:14px}
+.ja-label{font:400 16px/24px var(--font-pixel);letter-spacing:.1em;text-transform:uppercase}
+
+/* ===== Part 1: jellyfish scroll ===== */
 .track{height:800vh;position:relative}
-.view{position:sticky;top:0;height:100svh;overflow:hidden;background:#dcd8f4}
+.view{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--background)}
 #gl{position:absolute;inset:0;width:100%;height:100%;display:block}
-.ui{position:absolute;inset:0;pointer-events:none}
+.ui{position:absolute;inset:0;pointer-events:none;text-shadow:var(--text-shadow-soft)}
 .ui a,.ui button{pointer-events:auto}
-.logo{position:absolute;left:calc(30*var(--u));top:calc(20*var(--u));display:flex;align-items:center;gap:calc(14*var(--u));font:600 calc(25*var(--u))/1 Outfit,sans-serif;letter-spacing:-.01em}
-.logo svg{width:calc(50*var(--u));height:calc(30*var(--u));fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round}
-.links{position:absolute;right:calc(38*var(--u));top:calc(24*var(--u));display:flex;gap:calc(18*var(--u));font-size:calc(13*var(--u));letter-spacing:.04em}
-.links a:hover{text-decoration:underline}
-.index{position:absolute;left:calc(19*var(--u));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:calc(9*var(--u));font-size:calc(11*var(--u))}
-.index i{width:calc(3*var(--u));height:calc(3*var(--u));border-radius:50%;background:currentColor;opacity:.75}
-.index b{font-weight:400;opacity:.45;transition:opacity .3s}
+.index{position:absolute;left:calc(var(--gutter) - 6px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:calc(9*var(--u));font:400 16px/1 var(--font-pixel);letter-spacing:.1em}
+.index i{width:3px;height:3px;background:currentColor;opacity:.5}
+.index b{font-weight:400;opacity:.5;transition:opacity .3s}
 .index b.on{opacity:1}
-.bar{position:absolute;right:calc(10*var(--u));top:22%;bottom:22%;width:1px;background:rgba(11,11,16,.2)}
-.bar i{position:absolute;left:-1px;top:0;width:3px;height:9%;background:var(--ink);will-change:transform}
-.cap{position:absolute;left:50%;bottom:calc(30*var(--u));width:calc(680*var(--u));margin-left:calc(-340*var(--u));text-align:center;font:400 calc(23*var(--u))/1.18 Anton,sans-serif;text-transform:uppercase;letter-spacing:.012em;height:calc(84*var(--u))}
-.cap svg{display:block;margin:0 auto calc(9*var(--u));width:calc(30*var(--u));height:calc(20*var(--u));fill:currentColor}
-.cap p{position:absolute;left:0;right:0;top:calc(29*var(--u));will-change:opacity}
-.panel{position:absolute;top:50%;width:calc(330*var(--u));font:400 calc(25*var(--u))/1.14 Anton,sans-serif;text-transform:uppercase;letter-spacing:.012em;opacity:0;will-change:opacity,transform}
-.p1{left:calc(84*var(--u))}.p2{right:calc(84*var(--u));text-align:right}
-.panel .go{display:inline-block;margin-top:calc(16*var(--u));padding:calc(9*var(--u)) calc(16*var(--u));border-radius:99px;background:var(--ink);color:#f3f0ff;font:400 calc(12*var(--u))/1 "Space Mono",monospace;letter-spacing:.06em;pointer-events:auto}
-.sound{position:absolute;left:calc(30*var(--u));bottom:calc(30*var(--u));display:flex;align-items:center;gap:calc(7*var(--u));height:calc(30*var(--u));padding:0 calc(11*var(--u));border-radius:99px;background:var(--ink);color:#f3f0ff;font-size:calc(11*var(--u));letter-spacing:.04em}
-.sound span{display:flex;align-items:center;gap:calc(1.5*var(--u));height:calc(13*var(--u))}
+.bar{position:absolute;right:calc(var(--gutter)/2);top:22%;bottom:22%;width:1px;background:var(--border)}
+.bar i{position:absolute;left:-1px;top:0;width:3px;height:9%;background:var(--foreground);will-change:transform}
+.cap{position:absolute;left:50%;bottom:calc(var(--gutter) + 8px);width:min(640px,calc(100% - 2*var(--gutter) - 96px));transform:translateX(-50%);text-align:center;font-size:16px;line-height:1.625;color:var(--fg-90);height:54px}
+.cap p{position:absolute;left:0;right:0;top:0;will-change:opacity}
+.panel{position:absolute;top:50%;width:clamp(260px,calc(380*var(--u)),420px);font-size:18px;line-height:1.625;color:var(--fg-85);opacity:0;visibility:hidden;will-change:opacity,transform}
+.p1{left:calc(var(--gutter) + 40px)}.p2{right:calc(var(--gutter) + 24px);text-align:right}
+.p2 .ja-btn{margin-left:auto}
+.panel .ja-btn{margin-top:20px}
+.panel p{margin:0}
+.sound{position:absolute;left:var(--gutter);bottom:var(--gutter);display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border:1px solid var(--border);background:var(--surface-glass);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);font:400 16px/1 var(--font-pixel);letter-spacing:.1em;transition:background-color .15s}
+.sound:hover{background:var(--muted)}
+.sound span{display:flex;align-items:center;gap:2px;height:14px}
 .sound span i{width:1px;height:30%;background:currentColor;transition:height .3s}
 .sound[aria-pressed=true] span i:nth-child(odd){height:100%}
 .sound[aria-pressed=true] span i:nth-child(even){height:60%}
-.circ{position:absolute;right:calc(30*var(--u));display:grid;place-items:center;width:calc(34*var(--u));height:calc(34*var(--u));border-radius:50%;background:var(--ink);color:#f3f0ff;transition:transform .25s}
-.circ.up{bottom:calc(30*var(--u))}
-.circ.down{bottom:calc(74*var(--u))}
-.circ.up:hover{transform:translateY(-2px)}.circ.down:hover{transform:translateY(2px)}
-.circ svg{width:calc(16*var(--u));height:calc(16*var(--u));fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.corner{position:absolute;right:var(--gutter)}
+.corner.up{bottom:var(--gutter)}
+.corner.down{bottom:calc(var(--gutter) + 48px)}
 
-/* ---------- Part 2: glass cube ---------- */
-.hero{position:relative;width:100%;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:#000;color:#fff;font-family:'Poppins',sans-serif}
+/* ===== Part 2: glass cube ===== */
+.hero{position:relative;width:100%;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:var(--background);color:var(--foreground)}
 #scene{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
 #scene.dragging{cursor:grabbing}
 .cui{position:absolute;inset:0;pointer-events:none;z-index:2}
 .cui a,.cui button{pointer-events:auto}
-.c-nav{position:absolute;top:clamp(24px,4.7vh,40px);left:var(--pad-x);right:var(--pad-x);display:flex;align-items:center;justify-content:space-between}
-.c-logo{display:flex;align-items:center;gap:8px;color:#fff;font-size:15px;letter-spacing:-.01em}
-.logo-mark{width:20px;height:40px;background:#fff;border-radius:0 20px 20px 0}
-.c-logo b{font-weight:700}.c-logo span{font-weight:400}
-.nav-links{display:flex;gap:clamp(20px,4.1vw,60px);list-style:none}
-.nav-links a{color:#fff;font-size:15px;font-weight:500;position:relative}
-.nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s ease}
-.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
-.arrows{position:absolute;top:18.9%;left:76.7%;display:flex;gap:32px;transform:translate(-19px,-50%)}
-.arrow{width:38px;height:38px;border-radius:50%;border:2.5px solid #fff;color:#fff;display:grid;place-items:center;transition:background .25s,color .25s}
-.arrow svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.arrow:hover{background:#fff;color:#000}
-.dots{position:absolute;right:calc(var(--pad-x) - 7px);top:49.4%;transform:translateY(-50%);display:flex;flex-direction:column;gap:33px}
-.dot{width:14px;height:14px;border-radius:50%;border:2px solid #fff;background:#fff;transition:background .25s}
+.backtop{position:absolute;left:var(--gutter);top:96px;display:inline-flex;align-items:center;gap:8px;color:var(--fg-70);transition:color .15s}
+.backtop:hover{color:var(--foreground)}
+.backtop svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.arrows{position:absolute;top:18.9%;left:76.7%;display:flex;gap:24px;transform:translate(-32px,-50%)}
+.dots{position:absolute;right:var(--gutter);top:49.4%;transform:translateY(-50%);display:flex;flex-direction:column;gap:24px}
+.dot{width:12px;height:12px;border:2px solid var(--foreground);background:var(--foreground);transition:background .25s}
 .dot.active{background:transparent}
-.tagline{position:absolute;left:var(--pad-x);bottom:clamp(40px,7.5vh,70px);font-size:clamp(24px,2.65vw,44px);line-height:1.2;font-weight:300;letter-spacing:-.01em}
-.tagline strong{font-weight:700;display:block}
-.cta-row{position:absolute;left:45.6%;right:-1vw;top:88.7%;transform:translateY(-50%);display:flex;align-items:center}
-.cta{flex:none;padding:0 15px;height:48px;display:inline-flex;align-items:center;border:1.5px solid rgba(255,255,255,.85);border-radius:6px;background:rgba(0,0,0,.15);color:#fff;font-size:14px;transition:background .25s,color .25s}
-.cta:hover{background:#fff;color:#000}
-.cta-line{flex:1;height:1.5px;background:rgba(255,255,255,.8);min-width:40px}
-.count{flex:none;font-size:clamp(140px,19.8vw,360px);font-weight:400;line-height:1;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.9);transform:translateY(6%);user-select:none}
-.loader{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;transition:opacity .6s}
+.tagline{position:absolute;left:var(--gutter);bottom:clamp(40px,7.5vh,70px)}
+.tagline .t1{font-size:clamp(16px,1.5vw,22px);line-height:1.25;letter-spacing:.025em;text-transform:uppercase}
+.tagline .t2{font:400 clamp(26px,2.4vw,40px)/1.2 var(--font-pixel);text-transform:uppercase}
+.cta-row{position:absolute;left:45.6%;right:var(--gutter);top:88.7%;transform:translateY(-50%);display:flex;align-items:center;gap:0}
+.cta-row .ja-btn{flex:none}
+.cta-line{flex:1;height:1px;background:var(--border);min-width:40px}
+.count{flex:none;padding-left:16px;font:400 clamp(48px,6vw,96px)/1 var(--font-pixel);letter-spacing:.1em;color:var(--fg-50);user-select:none}
+.loader{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--fg-50);transition:opacity .6s}
 .loader.done{opacity:0}
-.backtop{position:absolute;left:var(--pad-x);top:clamp(80px,12vh,110px);font:400 18px VT323,monospace;letter-spacing:.08em;color:#fff;opacity:.8}
-.backtop:hover{opacity:1;text-decoration:underline}
+
+/* ===== Footer (same lines as the other pages) ===== */
+.ja-footer-wrap{background:var(--background);padding:0 var(--gutter) 16px}
+.ja-footer{display:grid;grid-template-columns:1fr;gap:8px;padding-top:16px;margin-top:16px;font-size:12px;line-height:16px;color:var(--fg-60)}
+.ja-footer p{margin:0}
+.ja-footer a{color:var(--accent);transition:color .15s}.ja-footer a:hover{color:var(--accent-hover)}
+@media (min-width:640px){.ja-footer{grid-template-columns:1fr 1fr;gap:16px}.ja-footer p:last-child{text-align:right}}
 
 @media (max-width:900px),(max-aspect-ratio:1/1){
-  .arrows{left:auto;right:var(--pad-x);top:15%;transform:translateY(-50%);gap:14px}
+  .arrows{left:auto;right:var(--gutter);top:19%;transform:translateY(-50%);gap:12px}
   .tagline{bottom:clamp(150px,20vh,220px)}
-  .cta-row{left:var(--pad-x);right:-3vw;top:auto;bottom:24px;transform:none}
-  .count{font-size:clamp(120px,22vw,200px)}
+  .cta-row{left:var(--gutter);right:var(--gutter);top:auto;bottom:24px;transform:none}
 }
 @media (max-width:820px){
   :root{--u:1px}
-  .logo{left:16px;top:16px;font-size:21px}
-  .links{right:16px;top:19px;font-size:12px}
   .index{display:none}.bar{right:6px}
-  .cap{width:calc(100% - 32px);left:16px;margin:0;bottom:72px;height:70px;font-size:17px}
-  .cap svg{width:24px;height:16px;margin-bottom:6px}.cap p{top:22px}.cap br{display:none}
-  .panel{top:auto;bottom:72px;left:16px;right:16px;width:auto;text-align:left;font-size:21px}
-  .sound{left:16px;bottom:18px}.circ{right:16px}.circ.up{bottom:18px}.circ.down{bottom:62px}
+  .cap{bottom:80px;font-size:15px;width:calc(100% - 2*var(--gutter))}
+  .panel{top:auto;bottom:80px;left:var(--gutter);right:var(--gutter);width:auto;text-align:left;font-size:16px}
+  .p2{right:var(--gutter);text-align:left}.p2 .ja-btn{margin-left:0}
+  .sound{bottom:18px}.corner.up{bottom:18px}.corner.down{bottom:66px}
 }
 @media (max-width:640px){
-  .nav-links{gap:16px}.nav-links a,.c-logo{font-size:13px}
-  .dots{gap:20px;right:16px}.dot{width:10px;height:10px}
-  .cta-row{right:-8vw}.count{font-size:120px}
+  .dots{gap:16px}.dot{width:10px;height:10px}
+  .count{font-size:48px}
 }
-@media (max-width:420px){.nav-links li:nth-child(2){display:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .ja-menu,.ja-menu nav a{transition:none}
+}
 </style>
 </head>
 <body id="top">
 
+<!-- ================= SHARED HEADER + PHONE MENU ================= -->
+<header class="ja-header">
+  <a href="/" aria-label="Home" class="ja-link"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 256 256" fill="none" role="img" aria-label="Joseph Adebiyi"><path d="M128 16 L224 72 L128 128 L32 72 Z" fill="white"/><path d="M32 72 L128 128 L128 240 L32 184 Z" fill="white" fill-opacity="0.7"/><path d="M128 128 L224 72 L224 184 L128 240 Z" fill="white" fill-opacity="0.45"/></svg></a>
+  <nav class="ja-nav" aria-label="Main">
+    <a class="ja-link" href="/work/">WORK</a>
+    <a class="ja-link" href="/about/">ABOUT</a>
+    <a class="ja-link" href="/design/" aria-current="page">DESIGN</a>
+    <a class="ja-link" href="https://www.linkedin.com/in/joseph-adebiyi-a55baa362" target="_blank" rel="noopener">LINKEDIN</a>
+    <a class="ja-link" href="mailto:jadebiyi79.ja@gmail.com">CONTACT</a>
+  </nav>
+  <button type="button" class="ja-iconbtn" id="menu-open" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></svg></button>
+</header>
+<div id="mobile-menu" class="ja-menu" role="dialog" aria-modal="true" aria-label="Menu" data-open="false" inert>
+  <div class="ja-menu-top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 256 256" fill="none" aria-hidden="true"><path d="M128 16 L224 72 L128 128 L32 72 Z" fill="white"/><path d="M32 72 L128 128 L128 240 L32 184 Z" fill="white" fill-opacity="0.7"/><path d="M128 128 L224 72 L224 184 L128 240 Z" fill="white" fill-opacity="0.45"/></svg>
+    <button type="button" class="ja-iconbtn" id="menu-close" aria-label="Close menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  </div>
+  <nav aria-label="Menu">
+    <a href="/work/">WORK</a>
+    <a href="/about/">ABOUT</a>
+    <a href="/design/">DESIGN</a>
+    <a href="https://www.linkedin.com/in/joseph-adebiyi-a55baa362" target="_blank" rel="noopener">LINKEDIN</a>
+    <a href="mailto:jadebiyi79.ja@gmail.com">CONTACT</a>
+  </nav>
+</div>
+
+<main>
+<h1 class="sr-only">biyi.graphics: graphic design by Joseph Adebiyi</h1>
+
 <!-- ================= PART 1: JELLYFISH SCROLL ================= -->
 <div class="track" id="track">
   <div class="view">
-    <canvas id="gl" aria-label="A pink jellyfish drifting in a lilac sky with giant words wrapping around it"></canvas>
+    <canvas id="gl" aria-label="A pink jellyfish drifting in the dark while giant words wrap around it"></canvas>
     <div class="ui">
-      <a class="logo" href="/" aria-label="biyi.graphics home">biyi.graphics<svg viewBox="0 0 50 30" aria-hidden="true"><path d="M2 22C8 20 12 6 15 3c2-2-3 20-1 21 3 1 5-9 8-9-1 3-2 8 0 8 3 0 4-8 7-8s-1 8 2 8 5-6 8-6 2 4 9 2"/></svg></a>
-      <nav class="links" aria-label="Main"><a href="/work/">[Work]</a><a href="/about/">[About]</a><a href="#cube">[Cube]</a></nav>
       <div class="index" id="index" aria-hidden="true"><i></i><b class="on">01</b><i></i><i></i><i></i><b>02</b><i></i><i></i><i></i><b>03</b><i></i><i></i><i></i><b>04</b><i></i><i></i><i></i><b>05</b><i></i></div>
       <div class="bar" aria-hidden="true"><i id="thumb"></i></div>
+      <!-- Draft copy: edit freely. Keep it plain, factual, first person. -->
       <div class="cap">
-        <svg id="goggle" viewBox="0 0 30 20" aria-hidden="true"><path fill-rule="evenodd" d="M7 2h16a6 6 0 0 1 6 6v5a5 5 0 0 1-9 3l-2-3h-6l-2 3a5 5 0 0 1-9-3V8a6 6 0 0 1 6-6Zm1 5a3.500 3.500 0 1 0 0 7 3.500 3.500 0 0 0 0-7Zm14 0a3.500 3.500 0 1 0 0 7 3.500 3.500 0 0 0 0-7Z"/></svg>
-        <p id="c1">Welcome to a creative space showcasing graphic design <br>that blends bold ideas and technology</p>
-        <p id="c2" style="opacity:0">Scroll on to see how brands, posters <br>and visuals come to life</p>
+        <p id="c1">biyi.graphics is where my graphic design work lives.</p>
+        <p id="c2" style="opacity:0">Keep scrolling. The last part is a cube you can spin.</p>
       </div>
-      <div class="panel p1" id="p1">Every project is built to make a brand impossible to ignore<br><a class="go" href="/work/">VIEW WORK</a></div>
-      <div class="panel p2" id="p2">Ready to explore? Spin the glass cube to see more.<br><a class="go" href="#cube">GO TO THE CUBE &darr;</a></div>
+      <div class="panel p1" id="p1"><p>I design graphics. My 3D work, built in Blender, is on the Work page.</p><a class="ja-btn" href="/work/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg><span>View my work</span></a></div>
+      <div class="panel p2" id="p2"><p>Next is a glass cube. Drag it, or use the arrows, to turn it.</p><a class="ja-btn" href="#cube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg><span>Go to the cube</span></a></div>
       <button class="sound" id="sound" aria-pressed="false" aria-label="Ambient sound"><span aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><em style="font-style:normal" id="st">OFF</em></button>
-      <a class="circ down" href="#cube" aria-label="Skip to the glass cube"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M3 9l5 5 5-5"/></svg></a>
-      <button class="circ up" id="up" aria-label="Back to top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14V2M3 7l5-5 5 5"/></svg></button>
+      <a class="ja-sq corner down" href="#cube" aria-label="Skip to the glass cube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></a>
+      <button class="ja-sq corner up" id="up" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
     </div>
   </div>
 </div>
 
 <!-- ================= PART 2: GLASS CUBE ================= -->
-<section class="hero" id="cube">
+<section class="hero" id="cube" aria-labelledby="cube-h">
   <canvas id="scene" aria-label="Rotatable glass cube. Drag to rotate."></canvas>
   <div class="cui">
-    <h2 class="sr-only">Explore New Ideas</h2>
-    <header class="c-nav">
-      <a href="/" class="c-logo"><i class="logo-mark"></i><b>biyi</b><span>.graphics</span></a>
-      <ul class="nav-links"><li><a href="/">Home</a></li><li><a href="/work/">Portfolio</a></li><li><a href="mailto:jadebiyi79.ja@gmail.com">Contact Us</a></li></ul>
-    </header>
-    <a class="backtop" href="#top">&uarr; BACK TO THE JELLYFISH</a>
+    <h2 class="sr-only" id="cube-h"><span id="headline-sr">Explore New Ideas</span></h2>
+    <a class="backtop ja-label" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>Back to the jellyfish</a>
     <div class="arrows">
-      <button class="arrow" id="prev" aria-label="Rotate left"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
-      <button class="arrow" id="next" aria-label="Rotate right"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button class="ja-sq" id="prev" aria-label="Previous word"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button>
+      <button class="ja-sq" id="next" aria-label="Next word"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
     </div>
-    <nav class="dots" aria-label="Slides"><button class="dot" aria-label="Slide 1"></button><button class="dot active" aria-label="Slide 2"></button><button class="dot" aria-label="Slide 3"></button></nav>
-    <p class="tagline">Let's Build the<br>Future of <strong>Design.</strong></p>
+    <nav class="dots" aria-label="Words"><button class="dot active" aria-label="Word 1: New"></button><button class="dot" aria-label="Word 2: Fresh"></button><button class="dot" aria-label="Word 3: Novel"></button></nav>
+    <p class="tagline"><span class="t1">Graphic design by</span><br><span class="t2">Joseph Adebiyi</span></p>
     <div class="cta-row">
-      <a href="/work/" class="cta">Explore Now</a>
+      <a href="/work/" class="ja-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg><span>View my work</span></a>
       <span class="cta-line"></span>
-      <span class="count" aria-hidden="true">07</span>
+      <span class="count" id="count" aria-hidden="true">01</span>
     </div>
-    <div class="loader" id="loader">Loading model</div>
+    <div class="loader ja-label" id="loader">Loading model</div>
   </div>
 </section>
+</main>
+
+<div class="ja-footer-wrap">
+  <footer class="ja-footer">
+    <p>Open to 2027 degree apprenticeships. <a href="mailto:jadebiyi79.ja@gmail.com">Get in touch</a></p>
+    <p>3 3D pieces &bull; Live-event tech since Jan 2024 &bull; Year 13</p>
+  </footer>
+</div>
+
+<!-- ================= MENU SCRIPT ================= -->
+<script>
+(()=>{
+const menu=document.getElementById('mobile-menu'),openB=document.getElementById('menu-open'),closeB=document.getElementById('menu-close');
+const links=[...menu.querySelectorAll('nav a')];
+function setOpen(o){
+  menu.dataset.open=o;openB.setAttribute('aria-expanded',o);
+  links.forEach((a,i)=>a.style.transitionDelay=o?(100+i*60)+'ms':'0ms');
+  if(o){menu.removeAttribute('inert');closeB.focus()}else{menu.setAttribute('inert','');openB.focus()}
+}
+openB.onclick=()=>setOpen(true);closeB.onclick=()=>setOpen(false);
+links.forEach(a=>a.addEventListener('click',()=>{menu.dataset.open=false;menu.setAttribute('inert','');openB.setAttribute('aria-expanded',false)}));
+addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.dataset.open==='true')setOpen(false)});
+})();
+</script>
 
 <!-- ================= JELLYFISH SCRIPT (raw WebGL2) ================= -->
 <script>
 (()=>{
-const SKY='https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261102_045255_3cb4b3c2-3cb5-4af9-93b4-bd88f2f883c3.png&w=1920&q=80';
 const STILL='https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261102_045249_4f7fe287-c84b-479f-a953-04990fe1a3ac.png&w=1080&q=85';
 const VIDEO='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261102_045327_a6584765-3154-43e6-b1c9-4e574f83a811.mp4';
-const WORDS=['BIYI.GRAPHICS','DESIGN TO','DELIGHT','INSPIRE','AND ENGAGE'];
+// The giant words. px:true sets that word in the pixel font (one per headline, like the rest of the site).
+const WORDS=[{t:'BIYI.GRAPHICS'},{t:'GRAPHIC'},{t:'DESIGN',px:true},{t:'BY JOSEPH'},{t:'ADEBIYI'}];
 const STEP=.14,GAP=3.4,RADIUS=9,CAM=11,FOCAL=8.14;
 const $=id=>document.getElementById(id),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const smooth=(a,b,x)=>{x=clamp((x-a)/(b-a));return x*x*(3-2*x)},ease=x=>x*x*x*(x*(6*x-15)+10);
 const cv=$('gl'),gl=cv.getContext('webgl2',{alpha:false,antialias:true,premultipliedAlpha:true});
-if(!gl){cv.parentNode.style.background='#dcd8f4';return}
+if(!gl){return}
 const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
 function program(vs,fs,names){
   const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,'#version 300 es\nprecision highp float;\n'+s);gl.compileShader(o);
@@ -181,9 +261,6 @@ function program(vs,fs,names){
   const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);
   const u={};names.forEach(n=>u[n]=gl.getUniformLocation(p,n));return{p,u};
 }
-const QUAD=`out vec2 v;void main(){vec2 c=vec2((gl_VertexID<<1)&2,gl_VertexID&2);v=c;gl_Position=vec4(c*2.-1.,0,1);}`;
-const skyP=program(QUAD,`in vec2 v;uniform sampler2D T;uniform vec3 C;out vec4 O;
-  void main(){vec2 uv=vec2(.5)+(v-.5)*C.xy;uv.y=1.-uv.y;uv.x+=C.z;O=textureLod(T,uv,1.6);}`,['T','C']);
 const wordP=program(`layout(location=0) in vec2 a;uniform vec4 W;uniform vec4 B;uniform float A;uniform vec3 L;out vec2 v;
   void main(){
     float t=(a.x-.5)*W.x+W.y;
@@ -192,13 +269,13 @@ const wordP=program(`layout(location=0) in vec2 a;uniform vec4 W;uniform vec4 B;
     float y=(a.y-.5)*L.x+L.y-L.z-3.6*pow(smoothstep(.8,8.,t),1.25)-.012*t*t;
     v=vec2(mix(B.x,B.z,a.x),mix(B.w,B.y,a.y));
     gl_Position=vec4(x*${FOCAL.toFixed(2)}/A,y*${FOCAL.toFixed(2)},0.,${CAM.toFixed(1)}-z);
-  }`,`in vec2 v;uniform sampler2D T;out vec4 O;void main(){float a=texture(T,v).a;O=vec4(vec3(.043,.043,.063)*a,a);}`,['W','B','A','L','T']);
+  }`,`in vec2 v;uniform sampler2D T;out vec4 O;void main(){float a=texture(T,v).a;O=vec4(vec3(1.)*a,a);}`,['W','B','A','L','T']);
 const dotP=program(`layout(location=0) in vec4 a;uniform float S,H,P;out float k;out float r;
   void main(){k=a.w;float y=fract(a.y+S*.012*(.4+a.z))*2.3-1.15;float x=fract(a.x+H*(a.w>.5?.035:.004))*2.4-1.2+.03*sin(S*.2+a.z*9.);
     gl_Position=vec4(x,y,0,1);gl_PointSize=(a.w>.5?5.+a.z*15.:5.+a.z*24.)*P;r=S*.6+a.z*7.+H;}`,
   `in float k;in float r;out vec4 O;void main(){vec2 p=gl_PointCoord-.5;
-    if(k>.5){float c=cos(r),s=sin(r);p=mat2(c,-s,s,c)*p;float a=step(max(abs(p.x),abs(p.y)),.3);O=vec4(vec3(.04)*a,a);}
-    else{float a=smoothstep(.5,.1,length(p))*.62;O=vec4(vec3(1.)*a,a);}}`,['S','H','P']);
+    if(k>.5){float c=cos(r),s=sin(r);p=mat2(c,-s,s,c)*p;float a=step(max(abs(p.x),abs(p.y)),.3)*.5;O=vec4(vec3(1.)*a,a);}
+    else{float a=smoothstep(.5,.1,length(p))*.5;O=vec4(vec3(1.)*a,a);}}`,['S','H','P']);
 const jellyP=program(`uniform mat3 M;out vec2 v;void main(){vec2 c=vec2((gl_VertexID<<1)&2,gl_VertexID&2);if(gl_VertexID==3)c=vec2(2,2);c*=.5;v=vec2(c.x,1.-c.y);gl_Position=vec4((M*vec3(c-.5,1.)).xy,0,1);}`,
   `in vec2 v;uniform sampler2D T;out vec4 O;void main(){
     vec3 c=texture(T,v).rgb;
@@ -207,20 +284,33 @@ const jellyP=program(`uniform mat3 M;out vec2 v;void main(){vec2 c=vec2((gl_Vert
     c.g=min(c.g,max(c.r,c.b)*.96);
     O=vec4(c*a,a);}`,['M','T']);
 
+// word atlas: one row per word, cut to its measured width (Inter 400, wide tracking; VT323 for the pixel word)
 const ROW=512,EM=440,atlas=document.createElement('canvas');atlas.width=4096;atlas.height=ROW*WORDS.length;
-let layout=[];
+let layout=[],lastM=0;
+function maxM(){const A=cv.clientWidth/cv.clientHeight,hs=clamp(A*.58,.26,1);return Math.min(2800,2.4*A/hs*EM/.86)}
 function drawAtlas(){
-  const x=atlas.getContext('2d');x.clearRect(0,0,atlas.width,atlas.height);x.font=`${EM}px Anton`;x.textBaseline='alphabetic';x.fillStyle='#000';x.textAlign='left';
-  x.letterSpacing='8px';let c=0;layout=[];
+  const x=atlas.getContext('2d');x.clearRect(0,0,atlas.width,atlas.height);x.textBaseline='alphabetic';x.fillStyle='#000';x.textAlign='left';
+  let c=0;layout=[];
   WORDS.forEach((w,i)=>{
-    const m=x.measureText(w).width+16;x.fillText(w,8,i*ROW+EM*.92+6);
+    let px=EM*(w.px?1.25:1);
+    const set=()=>{x.font=`400 ${px}px ${w.px?'VT323':'Inter'}`;x.letterSpacing=w.px?'0px':(px*.025)+'px'};
+    set();let m=x.measureText(w.t).width+16;
+    // keep every word narrower than the screen: Inter is wide, so long words shrink to fit (more on tall phone screens)
+    const MAXM=maxM();
+    if(m>MAXM){px*=MAXM/m;set();m=x.measureText(w.t).width+16}
+    x.fillText(w.t,8,i*ROW+EM*.92+6);
     const uW=m/EM*.86;layout.push({len:uW,c:c+uW/2,u:m/atlas.width,top:i/WORDS.length,bot:(i+1)/WORDS.length});c+=uW+GAP;
   });
+}
+function uploadAtlas(){
+  lastM=maxM();drawAtlas();
+  gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,tWords);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,atlas);gl.generateMipmap(gl.TEXTURE_2D);
+  if(aniso)gl.texParameterf(gl.TEXTURE_2D,aniso.TEXTURE_MAX_ANISOTROPY_EXT,8);
 }
 const tex=(unit,filter)=>{const t=gl.createTexture();gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,filter);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);return t};
-const tSky=tex(0,gl.LINEAR_MIPMAP_LINEAR),tWords=tex(1,gl.LINEAR_MIPMAP_LINEAR),tJelly=tex(2,gl.LINEAR);
+const tWords=tex(1,gl.LINEAR_MIPMAP_LINEAR),tJelly=tex(2,gl.LINEAR);
 gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([0,255,0,255]));
 const aniso=gl.getExtension('EXT_texture_filter_anisotropic');
 function load(url){return new Promise(r=>{const i=new Image;i.crossOrigin='anonymous';i.onload=()=>r(i);i.onerror=()=>r(null);i.src=url})}
@@ -249,8 +339,8 @@ function draw(s,sec){
   const c0=layout[i].c,c1=layout[i+1].c,head=c0+(c1-c0)*ease(f);
   const sink=ease(smooth(span+.015,span+.105,s))*6;
   const grow=ease(smooth(span+.08,span+.22,s)),side=smooth(.76,.82,s)-2*smooth(.88,.94,s);
-  gl.disable(gl.BLEND);gl.useProgram(skyP.p);gl.bindVertexArray(vaoE);
-  gl.uniform1i(skyP.u.T,0);const ca=asp/(16/9),fx=ca>1?1:ca,fy=ca>1?1/ca:1;gl.uniform3f(skyP.u.C,fx*.92,fy*.92,s*.05+sec*.0022);gl.drawArrays(gl.TRIANGLES,0,3);
+  // background: flat black, like every other page
+  gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);
   gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(dotP.p);gl.bindVertexArray(vaoD);gl.uniform1f(dotP.u.S,sec);gl.uniform1f(dotP.u.H,head*.1+s*4);gl.uniform1f(dotP.u.P,dpr*H/dpr/900);gl.drawArrays(gl.POINTS,0,40);
   gl.useProgram(wordP.p);gl.bindVertexArray(vaoW);gl.uniform1i(wordP.u.T,1);gl.uniform1f(wordP.u.A,asp);
@@ -268,10 +358,11 @@ function draw(s,sec){
 let lastIdx=0;const marks=[...$('index').querySelectorAll('b')];
 function ui(s,k){
   const op=(a,b,c,d)=>smooth(a,b,s)*(1-smooth(c,d,s));
-  const c1=1-smooth(.04,.08,s),c2=op(.08,.12,.56,.62);$('c1').style.opacity=c1;$('c2').style.opacity=c2;$('goggle').style.opacity=Math.max(c1,c2);
+  const c1=1-smooth(.04,.08,s),c2=op(.08,.12,.56,.62);$('c1').style.opacity=c1;$('c2').style.opacity=c2;
   const a=op(.72,.77,.84,.88),b=op(.9,.95,1.1,1.2);
-  $('p1').style.opacity=a;$('p1').style.transform=`translateY(calc(-50% + ${(1-a)*18}px))`;$('p1').style.pointerEvents=a>.5?'auto':'none';
-  $('p2').style.opacity=b;$('p2').style.transform=`translateY(calc(-50% + ${(1-b)*18}px))`;$('p2').style.pointerEvents=b>.5?'auto':'none';
+  const P1=$('p1'),P2=$('p2');
+  P1.style.opacity=a;P1.style.transform=`translateY(calc(-50% + ${(1-a)*18}px))`;P1.style.visibility=a>.02?'visible':'hidden';
+  P2.style.opacity=b;P2.style.transform=`translateY(calc(-50% + ${(1-b)*18}px))`;P2.style.visibility=b>.02?'visible':'hidden';
   const idx=Math.round(k);if(idx!==lastIdx){marks[lastIdx].classList.remove('on');marks[idx].classList.add('on');lastIdx=idx}
   $('thumb').style.transform=`translateY(${(s*1011).toFixed(1)}%)`;
 }
@@ -303,11 +394,9 @@ $('sound').onclick=()=>{
   ctx.resume();gain.gain.setTargetAtTime(on?.34:0,ctx.currentTime,.4);
 };
 
-Promise.all([load(SKY),load(STILL),document.fonts.load(`${EM}px Anton`,'BIYI.GRAPHICS')]).then(([sky,still])=>{
-  drawAtlas();
-  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tSky);if(sky){gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,sky);gl.generateMipmap(gl.TEXTURE_2D)}
-  gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,tWords);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,atlas);gl.generateMipmap(gl.TEXTURE_2D);
-  if(aniso)gl.texParameterf(gl.TEXTURE_2D,aniso.TEXTURE_MAX_ANISOTROPY_EXT,8);
+Promise.all([load(STILL),document.fonts.load('400 440px Inter','BIYI.GRAPHICS'),document.fonts.load('400 550px VT323','DESIGN')]).then(([still])=>{
+  uploadAtlas();
+  let rt=0;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(Math.abs(maxM()-lastM)>60)uploadAtlas()},250)});
   if(still){gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,tJelly);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,still)}
   if(!calm)video.play().catch(()=>{});
   size();read();now=target;running=true;requestAnimationFrame(loop);
@@ -323,6 +412,7 @@ import {mergeVertices,mergeGeometries} from 'three/addons/utils/BufferGeometryUt
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const MODEL_URL='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260929_212926_92423081-b0e4-4f5a-b650-14af6c05c058.glb';
+const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const canvas=document.getElementById('scene'),hero=document.getElementById('cube');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
 renderer.setClearColor(0x000000,1);renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -405,18 +495,21 @@ new GLTFLoader().load(MODEL_URL,gltf=>{
 const rtOpts={type:THREE.HalfFloatType};
 let rtBack=new THREE.WebGLRenderTarget(1,1,rtOpts),rtFront=new THREE.WebGLRenderTarget(1,1,rtOpts);
 let W=1,H=1,dpr=1;
+
+// The middle word of the headline changes as the cube is spun. It is the one pixel-font word.
+const MID=['NEW','FRESH','NOVEL'],MID_SR=['New','Fresh','Novel'];let wordIdx=0;
 function drawHeadline(){
   const w=Math.round(W*dpr),h=Math.round(H*dpr);txtCanvas.width=w;txtCanvas.height=h;
   const x=txtCanvas.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,w,h);
-  const mobile=w/dpr<768||w/h<1;
+  const mobile=w/dpr<768||w/h<1,PX=1.25;
+  const rows=i=>i===1?{t:MID[wordIdx],px:true}:{t:i?'IDEAS':'EXPLORE'};
+  const setFont=(r,fs)=>{x.font=r.px?`400 ${fs*PX}px VT323`:`400 ${fs}px Inter`;x.letterSpacing=r.px?'0px':(fs*.025)+'px'};
   let fs=Math.min(h*.21,w*(mobile?.21:.118));
-  const lines=['Explore','New','Ideas'];
-  x.font=`800 ${fs}px Poppins`;
-  const widest=Math.max(...lines.map(l=>x.measureText(l).width)),maxW=w*(mobile?.9:.5);
-  if(widest>maxW){fs*=maxW/widest;x.font=`800 ${fs}px Poppins`}
+  const widest=f=>Math.max(...[0,1,2].map(i=>{const r=rows(i);setFont(r,f);return x.measureText(r.t).width}));
+  const maxW=w*(mobile?.9:.5),wd=widest(fs);if(wd>maxW)fs*=maxW/wd;
   x.fillStyle='#e9e9e9';x.textAlign='center';x.textBaseline='alphabetic';
-  const cx=w*(mobile?.5:.505),cy=h*(mobile?.45:.468),gap=fs*1.07,cap=fs*.7;
-  lines.forEach((l,i)=>x.fillText(l,cx,cy+cap/2+(i-1)*gap));
+  const cx=w*(mobile?.5:.505),cy=h*(mobile?.45:.468),gap=fs*.92;
+  [0,1,2].forEach(i=>{const r=rows(i);setFont(r,fs);const cap=x.measureText('H').actualBoundingBoxAscent;x.fillText(r.t,cx,cy+(i-1)*gap+cap/2)});
   txtTex.needsUpdate=true;
 }
 function layout(){
@@ -437,16 +530,27 @@ addEventListener('resize',layout);
 // interaction
 let dragging=false,lastX=0,lastY=0,vx=0,vy=0,lastRelease=0,spinRemain=0;
 const qx=new THREE.Quaternion(),qy=new THREE.Quaternion(),AX=new THREE.Vector3(1,0,0),AY=new THREE.Vector3(0,1,0);
-const rot=(dx,dy)=>{qy.setFromAxisAngle(AY,dx);qx.setFromAxisAngle(AX,dy);spinner.quaternion.premultiply(qy);spinner.quaternion.premultiply(qx)};
-canvas.addEventListener('pointerdown',e=>{dragging=true;spinRemain=0;vx=vy=0;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging')});
+let yawAcc=0,wordTimer=0;
+const dotEls=[...document.querySelectorAll('.dot')],countEl=document.getElementById('count');
+function setWord(i,delay=0){
+  i=((i%MID.length)+MID.length)%MID.length;
+  clearTimeout(wordTimer);
+  const apply=()=>{wordIdx=i;dotEls.forEach((d,k)=>d.classList.toggle('active',k===i));
+    document.getElementById('headline-sr').textContent='Explore '+MID_SR[i]+' Ideas';countEl.textContent='0'+(i+1);drawHeadline()};
+  delay?wordTimer=setTimeout(apply,delay):apply();
+}
+const rot=(dx,dy)=>{
+  // every quarter turn of spinning swaps the word
+  yawAcc+=dx;while(Math.abs(yawAcc)>=Math.PI/2){const s=Math.sign(yawAcc);yawAcc-=s*Math.PI/2;setWord(wordIdx+s)}
+  qy.setFromAxisAngle(AY,dx);qx.setFromAxisAngle(AX,dy);spinner.quaternion.premultiply(qy);spinner.quaternion.premultiply(qx)};
+canvas.addEventListener('pointerdown',e=>{dragging=true;yawAcc=0;spinRemain=0;vx=vy=0;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging')});
 canvas.addEventListener('pointermove',e=>{if(!dragging)return;const dx=(e.clientX-lastX)*.008,dy=(e.clientY-lastY)*.008;lastX=e.clientX;lastY=e.clientY;rot(dx,dy);vx=dx;vy=dy});
 const up=()=>{if(!dragging)return;dragging=false;lastRelease=performance.now();canvas.classList.remove('dragging')};
 canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
 const spin=a=>{spinRemain+=a;vx=vy=0};
-document.getElementById('prev').onclick=()=>spin(-Math.PI/2);
-document.getElementById('next').onclick=()=>spin(Math.PI/2);
-const dotEls=[...document.querySelectorAll('.dot')];
-dotEls.forEach(d=>d.onclick=()=>{dotEls.forEach(x=>x.classList.remove('active'));d.classList.add('active')});
+document.getElementById('prev').onclick=()=>{spin(-Math.PI/2);yawAcc=0;setWord(wordIdx-1,170)};
+document.getElementById('next').onclick=()=>{spin(Math.PI/2);yawAcc=0;setWord(wordIdx+1,170)};
+dotEls.forEach((d,i)=>d.onclick=()=>{const diff=i-wordIdx;if(!diff)return;spin(diff*Math.PI/2);yawAcc=0;setWord(i,170)});
 
 // loop (paused when the cube section is off-screen)
 let onScreen=false,last=performance.now(),started=false;
@@ -457,7 +561,8 @@ function frame(now){
   if(spinRemain!==0){const step=spinRemain*Math.min(1,.09*f);qy.setFromAxisAngle(AY,step);spinner.quaternion.premultiply(qy);spinRemain-=step;if(Math.abs(spinRemain)<.0005)spinRemain=0}
   else if(!dragging){
     rot(vx*f,vy*f);const damp=Math.pow(.94,f);vx*=damp;vy*=damp;
-    const since=(now-lastRelease)/1000-.6,blend=lastRelease?Math.min(1,Math.max(0,since)):1;
+    // slow idle drift (off for reduced motion)
+    const since=(now-lastRelease)/1000-.6,blend=calm?0:(lastRelease?Math.min(1,Math.max(0,since)):1);
     qy.setFromAxisAngle(AY,.0035*f*blend);qx.setFromAxisAngle(AX,.0012*f*blend);
     spinner.quaternion.premultiply(qy).premultiply(qx);
   }
@@ -471,7 +576,7 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 new IntersectionObserver(e=>{onScreen=e[0].isIntersecting;if(onScreen&&!started){started=true;last=performance.now();requestAnimationFrame(frame)}},{threshold:0}).observe(hero);
-Promise.race([Promise.all([document.fonts.load('800 100px Poppins'),document.fonts.ready]),new Promise(r=>setTimeout(r,2500))]).then(()=>{layout()});
+Promise.race([Promise.all([document.fonts.load('400 100px Inter'),document.fonts.load('400 100px VT323'),document.fonts.ready]),new Promise(r=>setTimeout(r,2500))]).then(()=>{layout()});
 document.fonts.addEventListener('loadingdone',drawHeadline);
 layout();
 </script>
