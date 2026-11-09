@@ -6,12 +6,13 @@
 <title>Design - Joseph Adebiyi</title>
 <meta name="description" content="biyi.graphics: graphic design by Joseph Adebiyi. Scroll through the jellyfish, then spin the glass cube.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Same two families as the rest of the site: Inter for text, VT323 for the pixel words -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=VT323&display=swap" rel="stylesheet">
+<!-- Same two families as the rest of the site: Inter for text, VT323 for the pixel words (self-hosted, see fonts/fonts.css) -->
+<link rel="preload" as="font" type="font/woff2" href="/design/fonts/inter-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/design/fonts/vt323-latin.woff2" crossorigin>
+<link rel="stylesheet" href="/design/fonts/fonts.css">
+<!-- Three.js 0.169.0 and the three add-ons the cube uses, self-hosted in vendor/three -->
 <script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+{"imports":{"three":"/design/vendor/three/three.module.min.js","three/addons/":"/design/vendor/three/addons/"}}
 </script>
 <style>
 /* ===== Design tokens (from the Joseph Adebiyi design system) ===== */
