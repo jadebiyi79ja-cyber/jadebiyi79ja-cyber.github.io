@@ -6,12 +6,13 @@
 <title>Design - Joseph Adebiyi</title>
 <meta name="description" content="biyi.graphics: graphic design by Joseph Adebiyi. Scroll through the jellyfish, then spin the glass cube.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Same two families as the rest of the site: Inter for text, VT323 for the pixel words -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=VT323&display=swap" rel="stylesheet">
+<!-- Same two families as the rest of the site: Inter for text, VT323 for the pixel words (self-hosted, see fonts/fonts.css) -->
+<link rel="preload" as="font" type="font/woff2" href="/design/fonts/inter-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/design/fonts/vt323-latin.woff2" crossorigin>
+<link rel="stylesheet" href="/design/fonts/fonts.css">
+<!-- Three.js 0.169.0 and the three add-ons the cube uses, self-hosted in vendor/three -->
 <script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+{"imports":{"three":"/design/vendor/three/three.module.min.js","three/addons/":"/design/vendor/three/addons/"}}
 </script>
 <style>
 /* ===== Design tokens (from the Joseph Adebiyi design system) ===== */
@@ -247,8 +248,8 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.dataset.open==='true')s
 <!-- ================= JELLYFISH SCRIPT (raw WebGL2) ================= -->
 <script>
 (()=>{
-const STILL='https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261102_045249_4f7fe287-c84b-479f-a953-04990fe1a3ac.png&w=1080&q=85';
-const VIDEO='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261102_045327_a6584765-3154-43e6-b1c9-4e574f83a811.mp4';
+const STILL='/design/media/jellyfish-still.webp'; // self-hosted (public/design/media)
+const VIDEO='/design/media/jellyfish.mp4';
 // The giant words. px:true sets that word in the pixel font (one per headline, like the rest of the site).
 const WORDS=[{t:'BIYI.GRAPHICS'},{t:'GRAPHIC'},{t:'DESIGN',px:true},{t:'BY JOSEPH'},{t:'ADEBIYI'}];
 const STEP=.14,GAP=3.4,RADIUS=9,CAM=11,FOCAL=8.14;
@@ -413,7 +414,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeVertices,mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 
-const MODEL_URL='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260929_212926_92423081-b0e4-4f5a-b650-14af6c05c058.glb';
+const MODEL_URL='/design/media/cube.glb';
 const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const canvas=document.getElementById('scene'),hero=document.getElementById('cube');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
