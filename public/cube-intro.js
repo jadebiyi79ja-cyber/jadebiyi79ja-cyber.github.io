@@ -17,7 +17,7 @@
     settle: 1100, // spin down + fly back + shrink
     fade: 380, // overlay fades out once the cube has landed
     turnMs: 1050, // one full turn takes this long at full speed
-    bigScale: 2, // size at the centre, relative to the logo
+    bigScale: 3, // size at the centre, relative to the logo
   }
 
   var ease = function (x) {
