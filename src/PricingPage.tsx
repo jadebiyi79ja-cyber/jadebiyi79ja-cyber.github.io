@@ -1,7 +1,7 @@
 import { ArrowUpRight } from 'lucide-react'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
-import { FACTS, HOME_URL, QUOTE_URL, SERVICES, STEPS, WORK_URL, type Service } from './content'
+import { FACTS, HOME_URL, QUOTE_URL, SERVICES, STEPS, WORK_URL, type PriceGroup, type Service } from './content'
 
 // Same class lists as the other pages, so the pages match
 const PIXEL_WORD = 'font-pixel font-normal text-[1.25em] inline-block leading-none align-baseline'
@@ -9,6 +9,27 @@ const LABEL = 'text-base tracking-widest text-white/50 uppercase mb-3 font-pixel
 const LINK = 'inline-flex items-center gap-2 text-sm hover:opacity-70 transition-opacity'
 const TITLE =
   'text-3xl sm:text-4xl md:text-5xl tracking-wide uppercase font-normal leading-tight'
+
+// A titled list of prices: one row per option, label left, price right in the pixel font
+function PriceList({ group }: { group: PriceGroup }) {
+  return (
+    <div className="mt-6">
+      <h4 className={`${LABEL} mb-1`}>{group.title}</h4>
+      {group.note && <p className="mb-2 text-xs text-white/60">{group.note}</p>}
+      <ul className="border-b border-white/30">
+        {group.rows.map((row) => (
+          <li
+            key={row.label}
+            className="flex items-baseline justify-between gap-4 border-t border-white/30 py-3"
+          >
+            <span className="text-sm text-white/90">{row.label}</span>
+            <span className="font-pixel text-2xl uppercase">{row.price}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 // One service: number, title, price and timing on the left; what it is and what's in it on the right
 function ServiceRow({ service, index }: { service: Service; index: number }) {
@@ -20,11 +41,20 @@ function ServiceRow({ service, index }: { service: Service; index: number }) {
         </p>
         <h3 className="text-lg md:text-xl tracking-wide uppercase">{service.title}</h3>
         <p className="mt-3 font-pixel text-2xl md:text-3xl uppercase">{service.price}</p>
-        <p className="mt-1 font-pixel text-base text-white/50">{service.turnaround}</p>
+        {service.priceNote && (
+          <p className="mt-1 font-pixel text-base text-white/50">{service.priceNote}</p>
+        )}
+        {service.turnaround && (
+          <p className="mt-1 font-pixel text-base text-white/50">{service.turnaround}</p>
+        )}
       </div>
 
       <div className="max-w-prose text-sm text-white/80 leading-relaxed">
         <p>{service.description}</p>
+
+        {service.priceGroups?.map((group) => (
+          <PriceList key={group.title} group={group} />
+        ))}
 
         <h4 className={`${LABEL} mt-6`}>Includes</h4>
         <ul className="text-white/90 space-y-0.5">
@@ -53,16 +83,20 @@ export default function PricingPage() {
 
       <main className="flex-1 pb-12">
         <h1 className={`mt-4 max-w-4xl ${TITLE}`}>
-          Simple prices for <span className={PIXEL_WORD}>3D</span>, animation and{' '}
+          Simple prices for{' '}
+          <span className="whitespace-nowrap">
+            <span className={PIXEL_WORD}>3D</span>,
+          </span>{' '}
+          animation and{' '}
           <span className={PIXEL_WORD}>websites</span>
         </h1>
 
         <div className="mt-10 md:mt-16 grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16">
           <div>
             <p className="max-w-prose text-base md:text-lg text-white/85 leading-relaxed">
-              I&apos;m a Year 13 student, so my prices start low and projects fit around school. Every
-              price below is a starting point: tell me what you need and I&apos;ll send a fixed
-              quote.
+              I&apos;m a Year 13 student, so my prices start low and projects fit around school. Websites
+              have set prices, listed below. For 3D and live work the prices are starting points:
+              tell me what you need and I&apos;ll send a fixed quote.
             </p>
 
             <ul className="mt-8 flex flex-wrap items-stretch gap-2 sm:gap-3 text-sm text-white/80">

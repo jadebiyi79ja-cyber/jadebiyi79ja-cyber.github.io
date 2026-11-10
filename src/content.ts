@@ -119,26 +119,49 @@ export const WORKS: Work[] = [
   },
 ]
 
+export type PriceRow = { label: string; price: string }
+export type PriceGroup = { title: string; note?: string; rows: PriceRow[] }
+
 export type Service = {
   title: string
   description: string
-  price: string // shown in the pixel font, e.g. "From £150"
-  turnaround: string
+  price: string // shown in the pixel font, e.g. "From £60"
+  priceNote?: string // one short line under the price
+  turnaround?: string
+  priceGroups?: PriceGroup[] // a priced breakdown, for services that have one
   includes: string[]
   tools: string
   example?: { label: string; href: string }
 }
 
-// The Pricing page. DRAFT: the prices, turnaround times and include-lists below are
-// placeholders written to be edited. Replace them with your own before this goes live.
-// Everything else on the page is taken from the CV and the work already on the site.
+// The Pricing page. The website prices (design references and website creation) are
+// the owner's own figures. DRAFT: the 3D render, 3D animation and live-event prices,
+// the turnaround times and the include-lists are placeholders written to be edited.
+// Replace them with your own before this goes live.
 export const SERVICES: Service[] = [
   {
     title: 'Websites',
     description:
-      'A fast, hand-built site in React, TypeScript and Tailwind, published free on GitHub Pages. This portfolio is the example: a landing page, a Work page, an About page and a Design page with two WebGL scenes.',
-    price: 'From £150',
-    turnaround: 'Usually 1 to 3 weeks',
+      'I build your website from design references you choose. The references are bought online: pick a pack or a 3-month subscription, then I create the site from them. This portfolio is the example: a landing page, a Work page, an About page and a Design page with two WebGL scenes.',
+    price: '£20 a month',
+    priceNote: 'Website creation',
+    priceGroups: [
+      {
+        title: 'Choose your design references',
+        note: 'I buy these online for your site. Pick a pack, or a 3-month subscription. Pack prices are in US dollars.',
+        rows: [
+          { label: '2 references', price: '$49' },
+          { label: '5 references', price: '$99' },
+          { label: '10 references', price: '$149' },
+          { label: '3-month subscription', price: '£120' },
+        ],
+      },
+      {
+        title: 'I build your website',
+        note: 'Created from the references you chose.',
+        rows: [{ label: 'Website creation', price: '£20 a month' }],
+      },
+    ],
     includes: [
       'Layouts for phones and desktops',
       'One set of design rules across every page',
@@ -191,6 +214,6 @@ export const QUOTE_URL = `mailto:${EMAIL}?subject=${encodeURIComponent('Quote re
 
 export const STEPS = [
   { title: 'Tell me', text: 'Email me what you want made, what it is for, and when you need it.' },
-  { title: 'I quote', text: 'I send a fixed price for the work, based on the starting prices above.' },
+  { title: 'I quote', text: 'For 3D and live work I send a fixed price based on the starting prices above. Websites use the prices listed.' },
   { title: 'I make it', text: 'I share progress, you review it, and I fix what is wrong before I hand it over.' },
 ]
