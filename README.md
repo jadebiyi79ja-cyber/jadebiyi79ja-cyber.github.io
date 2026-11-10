@@ -52,13 +52,16 @@ site and publishes it. One-time setup:
 | `index.html` | The landing page's HTML shell: page title, meta description, Google Fonts, and the `#root` div React renders into |
 | `work/index.html` | The Work page's HTML shell. As a real file it's served at `/work/`, so no router is needed |
 | `about/index.html` | The About page's HTML shell, served at `/about/` |
+| `pricing/index.html` | The Pricing page's HTML shell, served at `/pricing/` |
+| `src/pricing.tsx` | Pricing page entry point: loads the CSS and mounts `<PricingPage />` |
+| `src/PricingPage.tsx` | The Pricing page: intro, the three services with starting prices, how it works and the quote button |
 | `src/about.tsx` | About page entry point: loads the CSS and mounts `<AboutPage />` |
 | `src/AboutPage.tsx` | The About page: bio, fact chips, skills, what's next and contact links |
 | `src/main.tsx` | Landing page entry point: loads the CSS and mounts `<App />` |
 | `src/work.tsx` | Work page entry point: loads the CSS and mounts `<WorkPage />` |
 | `src/App.tsx` | The landing page layout: meta grid, headline, button, fact chips, over the background video |
 | `src/WorkPage.tsx` | The Work page: the three pieces with their images and captions |
-| `src/content.ts` | Editable content in one place: email, links, skills, facts, piece count, and the Work page pieces and captions |
+| `src/content.ts` | Editable content in one place: email, links, skills, facts, piece count, the Work page pieces and captions, and the Pricing page services (prices are drafts: edit them) |
 | `src/components/ui/scroll-locked-video-hero.tsx` | Work page intro: scrolling scrubs the donut animation frame by frame, then releases into the page (keyboard and touch too; no lock with "reduce motion") |
 | `src/components/SiteHeader.tsx` | Logo, nav and hamburger shared by both pages. The phone menu is rendered into `<body>` with a React portal |
 | `src/components/SiteFooter.tsx` | The footer strip shared by both pages |
