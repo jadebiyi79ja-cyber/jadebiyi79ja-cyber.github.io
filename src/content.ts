@@ -162,7 +162,7 @@ export const SERVICES: Service[] = [
         rows: [{ label: 'Website creation', price: '£20 a month' }],
       },
     ],
-    includes: [
+    includes: [ // DRAFT
       'Layouts for phones and desktops',
       'One set of design rules across every page',
       'Keyboard use and reduced-motion settings respected',
@@ -176,7 +176,7 @@ export const SERVICES: Service[] = [
     description:
       'A still image of a scene or product, modelled in Blender and rendered in Cycles. I have built an isometric donut shop and coffee shop at dusk, and a photoreal plate of iced donuts.',
     price: 'From £40',
-    turnaround: 'Usually about 1 week',
+    turnaround: 'Usually about 1 week', // DRAFT
     priceGroups: [
       {
         title: 'Pick your detail level',
@@ -187,7 +187,7 @@ export const SERVICES: Service[] = [
         ],
       },
     ],
-    includes: [
+    includes: [ // DRAFT
       'Modelling, lighting and camera',
       'Rendered at 1920 x 1080 (Full HD)',
       'Delivered as a JPG or PNG',
@@ -200,8 +200,8 @@ export const SERVICES: Service[] = [
     description:
       'A short camera move or seamless loop, rendered frame by frame. My donut scene is 160 frames: a push-in that eases to a stop and pulls back out, looped as a website background.',
     price: 'From £120',
-    turnaround: 'Usually 1 to 2 weeks',
-    includes: [
+    turnaround: 'Usually 1 to 2 weeks', // DRAFT
+    includes: [ // DRAFT
       'Camera move planned with you',
       'Rendered at 24 fps as an H.264 MP4',
       'Seamless loop for websites on request',
