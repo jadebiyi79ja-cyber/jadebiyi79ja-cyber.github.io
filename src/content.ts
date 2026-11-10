@@ -135,9 +135,9 @@ export type Service = {
 }
 
 // The Pricing page. The website prices (design references and website creation) and the
-// 3D render price are the owner's own figures. DRAFT: the high-poly render price (From £80), the 3D animation price, the
-// turnaround times and the include-lists are placeholders written to be edited.
-// Replace them with your own before this goes live.
+// 3D render prices (standard and high-poly) are the owner's own figures. DRAFT: the 3D
+// animation price, the turnaround times and the include-lists are placeholders written
+// to be edited. Replace them with your own before this goes live.
 export const SERVICES: Service[] = [
   {
     title: 'Websites',
@@ -183,7 +183,7 @@ export const SERVICES: Service[] = [
         note: 'High-poly projects have more detailed models and take longer to render.',
         rows: [
           { label: '3D render', price: 'From £40' },
-          { label: 'High-poly 3D render project', price: 'From £80' }, // DRAFT price
+          { label: 'High-poly 3D render project', price: 'From £80' },
         ],
       },
     ],
