@@ -135,7 +135,7 @@ export type Service = {
 }
 
 // The Pricing page. The website prices (design references and website creation) and the
-// 3D render price are the owner's own figures. DRAFT: the 3D animation price, the
+// 3D render price are the owner's own figures. DRAFT: the high-poly render price (From £80), the 3D animation price, the
 // turnaround times and the include-lists are placeholders written to be edited.
 // Replace them with your own before this goes live.
 export const SERVICES: Service[] = [
@@ -177,6 +177,16 @@ export const SERVICES: Service[] = [
       'A still image of a scene or product, modelled in Blender and rendered in Cycles. I have built an isometric donut shop and coffee shop at dusk, and a photoreal plate of iced donuts.',
     price: 'From £40',
     turnaround: 'Usually about 1 week',
+    priceGroups: [
+      {
+        title: 'Pick your detail level',
+        note: 'High-poly projects have more detailed models and take longer to render.',
+        rows: [
+          { label: '3D render', price: 'From £40' },
+          { label: 'High-poly 3D render project', price: 'From £80' }, // DRAFT price
+        ],
+      },
+    ],
     includes: [
       'Modelling, lighting and camera',
       'Rendered at 1920 x 1080 (Full HD)',
