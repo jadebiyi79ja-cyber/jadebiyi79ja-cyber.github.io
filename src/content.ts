@@ -134,10 +134,10 @@ export type Service = {
   example?: { label: string; href: string }
 }
 
-// The Pricing page. The website prices (design references and website creation) and the
-// 3D render prices (standard and high-poly) are the owner's own figures. DRAFT: the 3D
-// animation price, the turnaround times and the include-lists are placeholders written
-// to be edited. Replace them with your own before this goes live.
+// The Pricing page. All the prices (websites, 3D renders, high-poly renders and 3D
+// animation) are the owner's own figures. DRAFT: the turnaround times and the
+// include-lists are placeholders written to be edited. Replace them with your own
+// before this goes live.
 export const SERVICES: Service[] = [
   {
     title: 'Websites',
