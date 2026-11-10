@@ -148,11 +148,11 @@ export const SERVICES: Service[] = [
     priceGroups: [
       {
         title: 'Choose your design references',
-        note: 'I buy these online for your site. Pick a pack, or a 3-month subscription. Pack prices are in US dollars.',
+        note: 'I buy these online for your site. Pick a pack, or a 3-month subscription.',
         rows: [
-          { label: '2 references', price: '$49' },
-          { label: '5 references', price: '$99' },
-          { label: '10 references', price: '$149' },
+          { label: '2 references', price: '£49' },
+          { label: '5 references', price: '£99' },
+          { label: '10 references', price: '£149' },
           { label: '3-month subscription', price: '£120' },
         ],
       },
