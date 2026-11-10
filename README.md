@@ -54,7 +54,7 @@ site and publishes it. One-time setup:
 | `about/index.html` | The About page's HTML shell, served at `/about/` |
 | `pricing/index.html` | The Pricing page's HTML shell, served at `/pricing/` |
 | `src/pricing.tsx` | Pricing page entry point: loads the CSS and mounts `<PricingPage />` |
-| `src/PricingPage.tsx` | The Pricing page: intro, the four services with starting prices, how it works and the quote button |
+| `src/PricingPage.tsx` | The Pricing page: intro, the three services with starting prices, how it works and the quote button |
 | `src/about.tsx` | About page entry point: loads the CSS and mounts `<AboutPage />` |
 | `src/AboutPage.tsx` | The About page: bio, fact chips, skills, what's next and contact links |
 | `src/main.tsx` | Landing page entry point: loads the CSS and mounts `<App />` |

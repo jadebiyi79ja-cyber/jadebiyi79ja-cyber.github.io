@@ -95,7 +95,7 @@ export default function PricingPage() {
           <div>
             <p className="max-w-prose text-base md:text-lg text-white/85 leading-relaxed">
               I&apos;m a Year 13 student, so my prices start low and projects fit around school. Websites
-              have set prices, listed below. For 3D and live work the prices are starting points:
+              have set prices, listed below. For 3D work the prices are starting points:
               tell me what you need and I&apos;ll send a fixed quote.
             </p>
 

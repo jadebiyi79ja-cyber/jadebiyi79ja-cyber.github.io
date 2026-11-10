@@ -134,9 +134,9 @@ export type Service = {
   example?: { label: string; href: string }
 }
 
-// The Pricing page. The website prices (design references and website creation) are
-// the owner's own figures. DRAFT: the 3D render, 3D animation and live-event prices,
-// the turnaround times and the include-lists are placeholders written to be edited.
+// The Pricing page. The website prices (design references and website creation) and the
+// 3D render price are the owner's own figures. DRAFT: the 3D animation price, the
+// turnaround times and the include-lists are placeholders written to be edited.
 // Replace them with your own before this goes live.
 export const SERVICES: Service[] = [
   {
@@ -175,7 +175,7 @@ export const SERVICES: Service[] = [
     title: '3D renders',
     description:
       'A still image of a scene or product, modelled in Blender and rendered in Cycles. I have built an isometric donut shop and coffee shop at dusk, and a photoreal plate of iced donuts.',
-    price: 'From £60',
+    price: 'From £40',
     turnaround: 'Usually about 1 week',
     includes: [
       'Modelling, lighting and camera',
@@ -199,21 +199,12 @@ export const SERVICES: Service[] = [
     tools: 'Blender · Cycles · MP4',
     example: { label: 'See the animation', href: WORK_URL },
   },
-  {
-    title: 'Live event tech',
-    description:
-      'Cameras, livestream, stage lighting and presentation screens. I have run these for services with audiences of several hundred people since January 2024, and I fix problems while the event keeps running.',
-    price: 'Quote on request',
-    turnaround: 'Around school and my volunteer team',
-    includes: ['Camera operation and livestream', 'Stage lighting', 'Screens and presentation software'],
-    tools: 'Live events · since 2024',
-  },
 ]
 
 export const QUOTE_URL = `mailto:${EMAIL}?subject=${encodeURIComponent('Quote request')}`
 
 export const STEPS = [
   { title: 'Tell me', text: 'Email me what you want made, what it is for, and when you need it.' },
-  { title: 'I quote', text: 'For 3D and live work I send a fixed price based on the starting prices above. Websites use the prices listed.' },
+  { title: 'I quote', text: 'For 3D work I send a fixed price based on the starting prices above. Websites use the prices listed.' },
   { title: 'I make it', text: 'I share progress, you review it, and I fix what is wrong before I hand it over.' },
 ]
