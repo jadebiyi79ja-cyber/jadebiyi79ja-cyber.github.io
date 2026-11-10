@@ -19,10 +19,8 @@
     fade: 380, // overlay fades out once the cube has landed
     turnMs: 480, // one full turn takes this long at full speed
     fill: 0.84, // at the centre the cube is this fraction of the screen height (or of its width, on narrow screens)
-    tumbleP: 0.62, // tumble: pitch swing (radians) and how long one swing takes
-    tumbleR: 0.44,
-    pitchMs: 760,
-    rollMs: 1130,
+    tumbleP: 0.3, // tumble: extra turning about two more axes, always the same direction as the spin,
+    tumbleR: 0.2, // at this fraction of the main spin speed
     ghosts: 6, // motion-trail copies
     ghostMs: 18, // time between trail copies
     ghostAlpha: 0.26,
@@ -119,45 +117,50 @@
 
   // ----- timeline -----
   var OMEGA = TAU / TIMING.turnMs // full spin speed, rad/ms
-  function yawBefore(t) {
-    // integral of OMEGA * smooth(t / rampSpin), in 4 ms steps
+  var QUARTER = Math.PI / 2 // the cube looks the same after any quarter turn about its own axes
+  // angle reached at time t by something turning at factor * OMEGA * ramp(t) (4 ms steps)
+  function angleBefore(t, factor) {
     var steps = Math.max(1, Math.ceil(t / 4)), dt = t / steps, a = 0
-    for (var i = 0; i < steps; i++) a += OMEGA * smooth((i * dt + dt / 2) / TIMING.rampSpin) * dt
-    return REST_YAW + a
+    for (var i = 0; i < steps; i++) a += OMEGA * factor * smooth((i * dt + dt / 2) / TIMING.rampSpin) * dt
+    return a
+  }
+  // From angle aS with speed v0 (as a distance over the settle), glide forward to the next multiple of
+  // `quantum` (plus base), never turning backwards. uu = progress through the settle, 0 to 1.
+  function settleAngle(aS, m0, uu, base, quantum) {
+    var target = base + Math.ceil((aS - base + m0 / 3) / quantum) * quantum
+    if (target - aS < m0 / 3) target += quantum
+    var h10 = uu * uu * uu - 2 * uu * uu + uu, h01 = -2 * uu * uu * uu + 3 * uu * uu
+    return { value: aS + h10 * m0 + h01 * (target - aS), target: target }
   }
 
   // state at time t. from = {x, y, size} (the header logo's centre and size); centre = {x, y, size} (where it grows to).
   // loadedAt = ms when the page finished loading (null/undefined while still loading).
+  // Yaw, pitch and roll all only ever increase, so the cube never appears to reverse.
   function stateAt(t, from, centre, loadedAt) {
     var settleStart = Math.max(TIMING.minShow, loadedAt == null ? Infinity : loadedAt)
     var s = { x: from.x, y: from.y, size: from.size, yaw: REST_YAW, pitch: 0, roll: 0, done: false, fade: 0 }
-    var wob = function (env) {
-      s.pitch = TIMING.tumbleP * env * Math.sin((TAU * t) / TIMING.pitchMs)
-      s.roll = TIMING.tumbleR * env * Math.sin((TAU * t) / TIMING.rollMs + 1.3)
-    }
     if (t <= settleStart) {
       var out = ease(t / TIMING.fly)
       s.x = from.x + (centre.x - from.x) * out
       s.y = from.y + (centre.y - from.y) * out
       s.size = from.size + (centre.size - from.size) * out
-      s.yaw = yawBefore(t)
-      wob(smooth(t / TIMING.rampSpin))
+      s.yaw = REST_YAW + angleBefore(t, 1)
+      s.pitch = angleBefore(t, TIMING.tumbleP)
+      s.roll = angleBefore(t, TIMING.tumbleR)
       return s
     }
     var u = (t - settleStart) / TIMING.settle, uu = Math.min(1, u)
-    var yawS = yawBefore(settleStart)
-    var m0 = OMEGA * smooth(settleStart / TIMING.rampSpin) * TIMING.settle // initial speed, as a distance
-    var target = REST_YAW + Math.ceil((yawS - REST_YAW + m0 / 3) / TAU) * TAU
-    if (target - yawS < m0 / 3) target += TAU
-    var h10 = uu * uu * uu - 2 * uu * uu + uu, h01 = -2 * uu * uu * uu + 3 * uu * uu
-    s.yaw = yawS + h10 * m0 + h01 * (target - yawS)
+    var v = OMEGA * smooth(settleStart / TIMING.rampSpin) * TIMING.settle // main spin speed at the start of the settle, as a distance
+    var y = settleAngle(REST_YAW + angleBefore(settleStart, 1), v, uu, REST_YAW, TAU)
+    var p = settleAngle(angleBefore(settleStart, TIMING.tumbleP), v * TIMING.tumbleP, uu, 0, QUARTER)
+    var r = settleAngle(angleBefore(settleStart, TIMING.tumbleR), v * TIMING.tumbleR, uu, 0, QUARTER)
+    s.yaw = y.value; s.pitch = p.value; s.roll = r.value
     var k = ease(1 - uu) * ease(Math.min(settleStart, TIMING.fly) / TIMING.fly) // 1 at the centre, 0 back at the logo
     s.x = from.x + (centre.x - from.x) * k
     s.y = from.y + (centre.y - from.y) * k
     s.size = from.size + (centre.size - from.size) * k
-    wob(1 - smooth(uu))
     if (u >= 1) {
-      s.yaw = target; s.pitch = 0; s.roll = 0
+      s.yaw = y.target; s.pitch = p.target; s.roll = r.target
       s.fade = Math.min(1, (t - settleStart - TIMING.settle) / TIMING.fade)
       s.done = s.fade >= 1
     }
