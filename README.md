@@ -72,4 +72,5 @@ site and publishes it. One-time setup:
 | `vite.config.ts` | Build config: React and Tailwind plugins, `base: '/'` for a GitHub Pages user site, and the three pages to build |
 | `tsconfig.json` | TypeScript settings (strict mode) |
 | `.github/workflows/deploy.yml` | GitHub Actions: install, build, and publish to Pages on every push |
+| `public/cube-intro.js` | The cube intro, loaded in the `<head>` of every page (including the static Design page). While a page loads, the logo cube flies to the centre, grows until it fills most of the screen and tumbles fast with motion trails; when the page has loaded it spins down, shrinks and lands exactly on the header logo. Plain JavaScript, no dependencies. Skipped with "reduce motion"; never holds a page for more than 10 seconds. Timing is the `TIMING` block at the top of the file |
 | `public/` | Files served as-is: favicon, the background video `hero.mp4` and its poster `hero-poster.jpg`, the scrub video `scrub.mp4` (frames 1–160, a keyframe every 6 frames so seeking is fast), and the Work page images in `images/` |
